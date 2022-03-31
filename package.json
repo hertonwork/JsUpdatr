@@ -3,22 +3,26 @@
     "version": "1.0.0",
     "description": "Light library to load data onto the DOM and have it synced with HTML elements",
     "main": "src/index.js",
+    "type": "module",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "node test/index.js --coverage-report=lcov"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/hertonwork/updatr"
+        "type": "git",
+        "url": "git+https://github.com/hertonwork/updatr"
     },
     "keywords": [
-      "updatr",
-      "observer",
-      "watcher"
+        "updatr",
+        "observer",
+        "watcher"
     ],
     "author": "Herton Fontineli <d@ntas.cc> (http://fontineli.com/)",
     "license": "Mozilla Public License Version 2.0",
     "bugs": {
-      "url": "https://github.com/hertonwork/updatr/issues"
+        "url": "https://github.com/hertonwork/updatr/issues"
     },
-    "homepage": "https://github.com/hertonwork/updatr#readme"
-  }
+    "homepage": "https://github.com/hertonwork/updatr#readme",
+    "devDependencies": {
+        "tap": "^16.0.1"
+    }
+}
