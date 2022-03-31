@@ -1,37 +1,37 @@
-## Welcome to GitHub Pages
+## Updatr Js simple Observer
 
-You can use the [editor on GitHub](https://github.com/hertonwork/updatr/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+This is a very simple observer that can be used to bind an input value to an element anywhere on the DOM.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```html
+// Example Usage
+<script type="module">
+    import { watcher, observe } from './src/index.js'
+    // As an example, let's say we have an object coming from the backend and set as state
+    observe(document.state)
+    // Query all elements with the attribute called h.
+    // For example <dd h="text"></dd>
+    // The attribute value is the key of the attribute we wanna watch and show on the page
+    document.querySelectorAll('[h]').forEach(element => {
+        watcher.run(() => {
+            element.textContent = document.state[element.attributes.h.value];
+        })
+    })
+    // Allowing model to change the data will trigger the event and update whoever is watching it
+    // For example <input id="test" type="text" name="test" data-model="text">
+    document.querySelectorAll('[data-model]').forEach(element => {
+        element.value = document.state[element.dataset.model];
+        element.addEventListener('input', () => {
+            document.state[element.dataset.model] = element.value;
+        });
+    })
+</script>
 ```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/hertonwork/updatr/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
 ### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Check out our [documentation](https://github.com/hertonwork/updatr#readme) 
+
+## License
+
+[MPL-2.0](https://opensource.org/licenses/MPL-2.0)
