@@ -48,7 +48,7 @@ function observe(obj) {
     return obj;
 }
 
-export default {
+export {
     watcher,
     observe
 };
