@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Updatr Example</title>
+    <meta name="description" content="Updatr Js observer example">
+    <!-- Above the fold styles -->
+    <style>
+    </style>
+    <!-- Updatr State -->
+    <script type="text/javascript">
+        document.state = {
+            text: 'some text 🍍',
+            number: 22,,
+        }
+    </script>
+    <meta name="theme-color" content="white">
+</head>
+
+<body>
+    <h1>Simple Observer</h1>
+    <div style="display: flex;">
+        <div style="flex: 2;">
+            <h2>Inputs and views</h2>
+            <p>Text</p>
+            <input id="test" type="text" name="data.text" data-model="text" value="">
+            <p>Number</p>
+            <input type="number" name="data.text" data-model="number" value="">
+        </div>
+        <div style="flex: 1; padding: 1rem;">
+            <h2>Data</h2>
+            <dl>
+                <dt>Text</dt>
+                <dd h="text"></dd>
+
+                <dt>Number</dt>
+                <dd h="number"></dd>
+            </dl>
+        </div>
+    </div>
+    <!-- Updatr Setup -->
+    <script type="module">
+        import { watcher, observe } from '../src/index.js'
+        observe(document.state)
+
+        document.querySelectorAll('[h]').forEach(element => {
+            watcher.run(() => {
+                element.textContent = document.state[element.attributes.h.value];
+            })
+        })
+        // Allowing model to change the data will trigger the event and update whoever is watching it
+        document.querySelectorAll('[data-model]').forEach(element => {
+            element.value = document.state[element.dataset.model];
+            element.addEventListener('input', () => {
+                document.state[element.dataset.model] = element.value;
+            });
+        })
+    </script>
+</body>
+
+</html>
