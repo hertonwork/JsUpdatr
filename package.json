@@ -7,6 +7,9 @@
     "scripts": {
         "test": "node test/index.js --coverage-report=lcov"
     },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hertonwork/updatr"
@@ -17,7 +20,7 @@
         "watcher"
     ],
     "author": "Herton Fontineli <d@ntas.cc> (http://fontineli.com/)",
-    "license": "Mozilla Public License Version 2.0",
+    "license": "MPL-2.0",
     "bugs": {
         "url": "https://github.com/hertonwork/updatr/issues"
     },
