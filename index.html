@@ -15,7 +15,7 @@
         @import "https://unpkg.com/open-props/normalize.min.css";
 
         main {
-            max-width:1200px; 
+            max-width: 1200px;
             margin: auto;
             padding: 6vh 3vw;
         }
@@ -28,12 +28,14 @@
             display: block;
             padding: var(--size-3) 0;
         }
+
         dd::before {
             content: 'data.' attr(data-watch) ' = ';
         }
+
         /* responsive without media queries  */
         .full-section {
-            margin:3vh 0; 
+            margin: 3vh 0;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             grid-gap: 2vh;
@@ -69,26 +71,17 @@
                 </p>
                 <p>
                     <label for="data_text">Number limited by the min max fields</label>
-                    <input id="data_number"
-                        type="number" 
-                        name="data_number" 
-                        data-watch-attributes="smallest:min,largest:max" 
-                        data-model="number">
+                    <input id="data_number" type="number" name="data_number"
+                        data-watch-attributes="smallest:min,largest:max" data-model="number">
                 </p>
 
                 <p>
                     <label for="data_min">Min number</label>
-                    <input id="data_min"
-                        type="number" 
-                        name="data_min" 
-                        data-model="smallest">
+                    <input id="data_min" type="number" name="data_min" data-model="smallest">
                 </p>
                 <p>
                     <label for="data_max">Max number</label>
-                    <input id="data_max"
-                        type="number" 
-                        name="data_max" 
-                        data-model="largest">
+                    <input id="data_max" type="number" name="data_max" data-model="largest">
                 </p>
             </article>
             <article>
@@ -97,7 +90,7 @@
                     <dt>Text</dt>
                     <dd data-watch="text"></dd>
                     <dd data-watch="favorites"></dd>
-    
+
                     <dt>Numbers</dt>
                     <dd data-watch="number"></dd>
                     <dd data-watch="largest"></dd>
@@ -107,7 +100,7 @@
             <article>
                 <h3>Inline Views</h3>
                 <p>
-                    I like <em data-watch="text"></em> and my favorites are <em data-watch="favorites"></em> 
+                    I like <em data-watch="text"></em> and my favorites are <em data-watch="favorites"></em>
                 </p>
                 <p aria-live="polite" data-watch="name"></p>
             </article>
@@ -115,9 +108,9 @@
     </main>
     <!-- JsUpdatr Setup -->
     <script type="module">
-        import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/updatr@v1/src/index.min.js'
-        observe(document.state)
-        const modelExist = (model) => document.state.hasOwnProperty(model);
+        import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/JsUpdatr@v1/src/index.min.js'
+        observe(document.state);
+        const modelExist = model => document.state.hasOwnProperty(model);
 
         // Finding elements that will be used to control the data or "model"
         document.querySelectorAll('[data-model]').forEach(element => {
@@ -137,9 +130,8 @@
         // Example: data-watch-attributes="smallest:min,largest:max" 
         // Where max and min are the attributes and smallest anj largest are the models
         document.querySelectorAll('[data-watch-attributes]').forEach(element => {
-            let attributes = element.dataset.watchAttributes.split(',');
-            attributes.forEach(attributesSet => {
-                let [model, attribute] = attributesSet.split(':');
+            element.dataset.watchAttributes.split(',').forEach(attributesSet => {
+                const [model, attribute] = attributesSet.split(':');
                 if (modelExist(model) && attribute) {
                     watcher.run(() => {
                         element.setAttribute(attribute, document.state[model]);
