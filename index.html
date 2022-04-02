@@ -57,7 +57,7 @@
 
 <body>
     <main>
-        <h2>JsUpdatr Observer</h2>
+        <h2>JsUpdatr</h2>
         <section class="full-section">
             <article>
                 <h3>Data Models</h3>
@@ -108,7 +108,7 @@
     </main>
     <!-- JsUpdatr Setup -->
     <script type="module">
-        import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/JsUpdatr@v1/src/index.min.js'
+        import { watcher, observe } from './src/index.js'
         observe(document.state);
         const modelExist = model => document.state.hasOwnProperty(model);
 
