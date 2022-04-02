@@ -1,7 +1,7 @@
 {
-    "name": "updatr",
+    "name": "js_updatr",
     "version": "1.0.0",
-    "description": "Light library to load data onto the DOM and have it synced with HTML elements",
+    "description": "minimalistic library to load data onto the DOM and have it synced with HTML elements",
     "main": "src/index.js",
     "type": "module",
     "scripts": {
@@ -9,19 +9,19 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/hertonwork/updatr"
+        "url": "git+https://github.com/hertonwork/JsUpdatr"
     },
     "keywords": [
-        "updatr",
+        "JsUpdatr",
         "observer",
         "watcher"
     ],
     "author": "Herton Fontineli <d@ntas.cc> (http://fontineli.com/)",
     "license": "MPL-2.0",
     "bugs": {
-        "url": "https://github.com/hertonwork/updatr/issues"
+        "url": "https://github.com/hertonwork/JsUpdatr/issues"
     },
-    "homepage": "https://github.com/hertonwork/updatr#readme",
+    "homepage": "https://github.com/hertonwork/JsUpdatr#readme",
     "devDependencies": {
         "tap": "^16.0.1"
     }

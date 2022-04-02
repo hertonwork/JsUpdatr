@@ -1,4 +1,4 @@
-## Updatr Js simple Observer
+## JsUpdatr Js simple Observer
 
 This is a very simple observer that can be used to bind an input value to an element anywhere on the DOM.
 
@@ -6,7 +6,7 @@ This is a very simple observer that can be used to bind an input value to an ele
 ```html
 // Example Usage
 <script type="module">
-    import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/updatr@v1/src/index.min.js'
+    import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/JsUpdatr@v1/src/index.min.js'
     // As an example, let's say we have an object coming from the backend and set as state
     observe(document.state)
     const modelExist = (model) => document.state.hasOwnProperty(model);
@@ -45,7 +45,7 @@ This is a very simple observer that can be used to bind an input value to an ele
 
 ### Support or Contact
 
-Check out our [example page](https://hertonwork.github.io/updatr) 
+Check out our [example page](https://hertonwork.github.io/JsUpdatr) 
 
 ## License
 
