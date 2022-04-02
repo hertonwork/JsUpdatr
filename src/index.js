@@ -1,7 +1,7 @@
 
 // watcher Object that will be used to get the current function
 // All we need to do is run the code as a param for watcher.run()
-const watcher = (function() {
+const watcher = (function () {
     return {
         run(update) {
             function wrappedUpdate() {
@@ -15,17 +15,18 @@ const watcher = (function() {
     }
 })()
 
-class Depend {
-    constructor() {
-        this.deps = new Set();
-    }
-    depend() {
+function Depend() {
+    this.deps = new Set();
+}
+
+Depend.prototype = {
+    depend: function () {
         if (watcher.activeFunction) {
             this.deps.add(watcher.activeFunction);
         }
-    }
-    notify() {
-        this.deps.forEach(func => func());
+    },
+    notify: function () {
+        this.deps.forEach(callBack => callBack());
     }
 }
 
