@@ -6,7 +6,7 @@ This is a very simple observer that can be used to bind an input value to an ele
 ```html
 // Example Usage
 <script type="module">
-    import { watcher, observe } from './src/index.js'
+    import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/updatr@v1/src/index.min.js'
     // As an example, let's say we have an object coming from the backend and set as state
     observe(document.state)
     // Query all elements with the attribute called h.

@@ -3,59 +3,148 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Updatr Example</title>
     <meta name="description" content="Updatr Js observer example">
-    <!-- Above the fold styles -->
+    <link rel="prefetch" href="https://unpkg.com/open-props" />
+    <link rel="prefetch" href="https://unpkg.com/open-props/normalize.min.css" />
+    <link rel="prefetch" href="https://cdn.jsdelivr.net/gh/hertonwork/updatr@v1.0.0/src/index.min.js" />
+
     <style>
+        @import "https://unpkg.com/open-props";
+        @import "https://unpkg.com/open-props/normalize.min.css";
+
+        main {
+            max-width:1200px; 
+            margin: auto;
+            padding: 6vh 3vw;
+        }
+
+        h3 {
+            padding: var(--size-3) 0;
+        }
+
+        label {
+            display: block;
+            padding: var(--size-3) 0;
+        }
+        dd::before {
+            content: 'data.' attr(data-watch) ' = ';
+        }
+        /* responsive without media queries  */
+        .full-section {
+            margin:3vh 0; 
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 2vh;
+        }
     </style>
     <!-- Updatr State -->
     <script type="text/javascript">
         document.state = {
-            text: 'some text 🍍',
+            name: '',
+            showName: false,
+            text: 'fruit salad',
+            favorites: '🥥 🍓 🍍',
             number: 22,
+            largest: 23,
+            smallest: 11,
         }
     </script>
-    <meta name="theme-color" content="white">
 </head>
 
 <body>
-    <h1>Updatr Observer</h1>
-    <div style="display: flex;">
-        <div style="flex: 2;">
-            <h2>Inputs and views</h2>
-            <p>Text</p>
-            <input id="test" type="text" name="data.text" data-model="text" value="">
-            <p>Number</p>
-            <input type="number" name="data.text" data-model="number" value="">
-        </div>
-        <div style="flex: 1; padding: 1rem;">
-            <h2>Data</h2>
-            <dl>
-                <dt>Text</dt>
-                <dd h="text"></dd>
+    <main>
+        <h2>Updatr Observer</h2>
+        <section class="full-section">
+            <article>
+                <h3>Data Models</h3>
+                <p>
+                    <label for="data_name">Some name</label>
+                    <input id="data_name" type="text" name="data_name" data-model="name" value="">
+                </p>
+                <p>
+                    <label for="data_text">Some text</label>
+                    <input id="data_text" type="text" name="data_text" data-model="text" value="">
+                </p>
+                <p>
+                    <label for="data_text">Number limited by the min max fields</label>
+                    <input id="data_number"
+                        type="number" 
+                        name="data_number" 
+                        data-watch-attributes="smallest:min,largest:max" 
+                        data-model="number">
+                </p>
 
-                <dt>Number</dt>
-                <dd h="number"></dd>
-            </dl>
-        </div>
-    </div>
+                <p>
+                    <label for="data_min">Min number</label>
+                    <input id="data_min"
+                        type="number" 
+                        name="data_min" 
+                        data-model="smallest">
+                </p>
+                <p>
+                    <label for="data_max">Max number</label>
+                    <input id="data_max"
+                        type="number" 
+                        name="data_max" 
+                        data-model="largest">
+                </p>
+            </article>
+            <article>
+                <h3>Data Views</h3>
+                <dl>
+                    <dt>Text</dt>
+                    <dd data-watch="text"></dd>
+                    <dd data-watch="favorites"></dd>
+    
+                    <dt>Numbers</dt>
+                    <dd data-watch="number"></dd>
+                    <dd data-watch="largest"></dd>
+                    <dd data-watch="smallest"></dd>
+                </dl>
+            </article>
+            <article>
+                <h3>Inline Views</h3>
+                <p>
+                    I like <em data-watch="text"></em> and my favorites are <em data-watch="favorites"></em> 
+                </p>
+                <p aria-live="polite" data-watch="name"></p>
+            </article>
+        </section>
+    </main>
     <!-- Updatr Setup -->
     <script type="module">
-        import { watcher, observe } from './src/index.js'
+        import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/updatr@v1/src/index.min.js'
         observe(document.state)
+        const modelExist = (model) => document.state.hasOwnProperty(model);
 
-        document.querySelectorAll('[h]').forEach(element => {
-            watcher.run(() => {
-                element.textContent = document.state[element.attributes.h.value];
-            })
-        })
-        // Allowing model to change the data will trigger the event and update whoever is watching it
+        // Finding elements that will be used to control the data or "model"
         document.querySelectorAll('[data-model]').forEach(element => {
             element.value = document.state[element.dataset.model];
             element.addEventListener('input', () => {
                 document.state[element.dataset.model] = element.value;
+            });
+        })
+
+        // Finding elements that will be used to show the data or "view"
+        document.querySelectorAll('[data-watch]').forEach(element => {
+            if (modelExist(element.dataset.watch)) watcher.run(() => {
+                element.textContent = document.state[element.dataset.watch];
+            })
+        })
+        // Finding element attributes that will be set based on the model data
+        // Example: data-watch-attributes="smallest:min,largest:max" 
+        // Where max and min are the attributes and smallest anj largest are the models
+        document.querySelectorAll('[data-watch-attributes]').forEach(element => {
+            let attributes = element.dataset.watchAttributes.split(',');
+            attributes.forEach(attributesSet => {
+                let [model, attribute] = attributesSet.split(':');
+                if (modelExist(model) && attribute) {
+                    watcher.run(() => {
+                        element.setAttribute(attribute, document.state[model]);
+                    })
+                }
             });
         })
     </script>
