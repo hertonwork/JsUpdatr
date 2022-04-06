@@ -1,69 +1,98 @@
-
-// watcher 
-// 
-
+'use strict';
 
 /**
- * @typedef {Object} - Object that will be used to get the current function
- * @property {function} activeFunction - an active function that will be trying to access a property
- * @function {function} run - All we need to do is run the code as a param for watcher.run()
+ * Singleton Class that will keep track of the active function
+ * 
+ * We need the singleton instance of this to keep track of a function running
+ * in order to add it as an action on a list of actions in Depend class
+ * 
+ * We use the observe method to intercept each property of the state
  */
-const watcher: {
-    activeFunction: Function | null,
-    run: Function
-} = (function () {
-    return {
-        activeFunction: null,
-        run(update: Function) {
-            function wrappedUpdate() {
-                watcher.activeFunction = wrappedUpdate;
-                update();
-                watcher.activeFunction = null;
-            }
-            wrappedUpdate();
-        }
-    }
-})()
-
-class Depend {
-    deps: Set<Function | null>;
+class Watcher {
+    private static instance: Watcher;
+    private activeAction: Function | null;
 
     constructor() {
-        this.deps = new Set();
+        this.activeAction = null;
     }
 
-    depend() {
-        this.deps.add(watcher.activeFunction);
+    public static getInstance(): Watcher {
+        if (!Watcher.instance) {
+            Watcher.instance = new Watcher();
+        }
+
+        return Watcher.instance;
     }
 
-    notify() {
-        this.deps.forEach(callBack => {
-            if (callBack) callBack();
+    public static getActiveAction(): Function | null {
+        const instance = Watcher.getInstance();
+        return instance.activeAction;
+    }
+
+    public static setActiveAction(action: Function): void {
+        const instance = Watcher.getInstance();
+        instance.activeAction = action;
+    }
+
+    public static resetActiveAction(): void {
+        const instance = Watcher.getInstance();
+        instance.activeAction = null;
+    }
+
+    public static run(update: Function): void {
+        function wrappedUpdate() {
+            Watcher.setActiveAction(wrappedUpdate);
+            update();
+            Watcher.resetActiveAction();
+        }
+        wrappedUpdate();
+    }
+
+    public static observe(state: Object): Object {
+        Object.keys(state).forEach(prop => {
+            let internal = state[prop];
+            const dep = new Depend();
+            Object.defineProperty(state, prop, {
+                get() {
+                    dep.depend()
+                    return internal
+                },
+                set(newVal) {
+                    const changed = (internal !== newVal);
+                    internal = newVal;
+                    if (changed) dep.envoke()
+                }
+            })
+        })
+
+        return state;
+    }
+}
+
+/**
+ * Depend Class is used to keep track of actions
+ * 
+ * When we try to access an attrbute from the watched instance
+ * we keep track of the actions to run/envoke them when there is a change
+ */
+class Depend {
+    actions: Set<Function | null>;
+
+    constructor() {
+        this.actions = new Set();
+    }
+
+    depend(): void {
+        this.actions.add(Watcher.getActiveAction());
+    }
+
+    envoke(): void {
+        this.actions.forEach(action => {
+            if (action) action();
         });
     }
 }
 
-
-function observer(obj: object) {
-    Object.keys(obj).forEach(prop => {
-        let internal = obj[prop];
-        const dep = new Depend();
-        Object.defineProperty(obj, prop, {
-            get() {
-                dep.depend()
-                return internal
-            },
-            set(newVal) {
-                const changed = (internal !== newVal);
-                internal = newVal;
-                if (changed) dep.notify()
-            }
-        })
-    })
-    return obj;
-}
-
 export {
-    watcher,
-    observer
+    Watcher
 };
