@@ -124,8 +124,8 @@
     </main>
     <!-- JsUpdatr Setup -->
     <script type="module">
-        import { jsUpdatr } from './dist/index.js'
-        jsUpdatr.observe(document.state);
+        import { JsUpdatr } from './dist/index.js'
+        JsUpdatr.observe(document.state);
         const modelExist = model => document.state.hasOwnProperty(model);
 
         // Finding elements that will be used to control the data or "model"
@@ -138,7 +138,7 @@
 
         // Finding elements that will be used to show the data or "view"
         document.querySelectorAll('[data-watch]').forEach(element => {
-            if (modelExist(element.dataset.watch)) jsUpdatr.run(() => {
+            if (modelExist(element.dataset.watch)) JsUpdatr.run(() => {
                 element.textContent = document.state[element.dataset.watch];
             })
         })
@@ -149,7 +149,7 @@
             element.dataset.watchAttributes.split(',').forEach(attributesSet => {
                 const [model, attribute] = attributesSet.split(':');
                 if (modelExist(model) && attribute) {
-                    jsUpdatr.run(() => {
+                    JsUpdatr.run(() => {
                         element.setAttribute(attribute, document.state[model]);
                     })
                 }

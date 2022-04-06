@@ -8,42 +8,42 @@
  * 
  * We use the observe method to intercept each property of the state
  */
-class jsUpdatr {
-    private static instance: jsUpdatr;
+class JsUpdatr {
+    private static instance: JsUpdatr;
     private activeAction: Function | null;
 
     constructor() {
         this.activeAction = null;
     }
 
-    public static getInstance(): jsUpdatr {
-        if (!jsUpdatr.instance) {
-            jsUpdatr.instance = new jsUpdatr();
+    public static getInstance(): JsUpdatr {
+        if (!JsUpdatr.instance) {
+            JsUpdatr.instance = new JsUpdatr();
         }
 
-        return jsUpdatr.instance;
+        return JsUpdatr.instance;
     }
 
     public static getActiveAction(): Function | null {
-        const instance = jsUpdatr.getInstance();
+        const instance = JsUpdatr.getInstance();
         return instance.activeAction;
     }
 
     public static setActiveAction(action: Function): void {
-        const instance = jsUpdatr.getInstance();
+        const instance = JsUpdatr.getInstance();
         instance.activeAction = action;
     }
 
     public static resetActiveAction(): void {
-        const instance = jsUpdatr.getInstance();
+        const instance = JsUpdatr.getInstance();
         instance.activeAction = null;
     }
 
     public static run(update: Function): void {
         function wrappedUpdate() {
-            jsUpdatr.setActiveAction(wrappedUpdate);
+            JsUpdatr.setActiveAction(wrappedUpdate);
             update();
-            jsUpdatr.resetActiveAction();
+            JsUpdatr.resetActiveAction();
         }
         wrappedUpdate();
     }
@@ -83,7 +83,7 @@ class Depend {
     }
 
     depend(): void {
-        this.actions.add(jsUpdatr.getActiveAction());
+        this.actions.add(JsUpdatr.getActiveAction());
     }
 
     envoke(): void {
@@ -94,5 +94,5 @@ class Depend {
 }
 
 export {
-    jsUpdatr
+    JsUpdatr
 };
