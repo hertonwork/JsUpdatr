@@ -8,42 +8,42 @@
  * 
  * We use the observe method to intercept each property of the state
  */
-class Watcher {
-    private static instance: Watcher;
+class jsUpdatr {
+    private static instance: jsUpdatr;
     private activeAction: Function | null;
 
     constructor() {
         this.activeAction = null;
     }
 
-    public static getInstance(): Watcher {
-        if (!Watcher.instance) {
-            Watcher.instance = new Watcher();
+    public static getInstance(): jsUpdatr {
+        if (!jsUpdatr.instance) {
+            jsUpdatr.instance = new jsUpdatr();
         }
 
-        return Watcher.instance;
+        return jsUpdatr.instance;
     }
 
     public static getActiveAction(): Function | null {
-        const instance = Watcher.getInstance();
+        const instance = jsUpdatr.getInstance();
         return instance.activeAction;
     }
 
     public static setActiveAction(action: Function): void {
-        const instance = Watcher.getInstance();
+        const instance = jsUpdatr.getInstance();
         instance.activeAction = action;
     }
 
     public static resetActiveAction(): void {
-        const instance = Watcher.getInstance();
+        const instance = jsUpdatr.getInstance();
         instance.activeAction = null;
     }
 
     public static run(update: Function): void {
         function wrappedUpdate() {
-            Watcher.setActiveAction(wrappedUpdate);
+            jsUpdatr.setActiveAction(wrappedUpdate);
             update();
-            Watcher.resetActiveAction();
+            jsUpdatr.resetActiveAction();
         }
         wrappedUpdate();
     }
@@ -83,7 +83,7 @@ class Depend {
     }
 
     depend(): void {
-        this.actions.add(Watcher.getActiveAction());
+        this.actions.add(jsUpdatr.getActiveAction());
     }
 
     envoke(): void {
@@ -94,5 +94,5 @@ class Depend {
 }
 
 export {
-    Watcher
+    jsUpdatr
 };

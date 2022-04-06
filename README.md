@@ -6,9 +6,9 @@ This is a very simple observer that can be used to bind an input value to an ele
 ```html
 // Example Usage
 <script type="module">
-    import { watcher, observe } from 'https://cdn.jsdelivr.net/gh/hertonwork/JsUpdatr@v2/src/index.min.js'; // Check the version
+    import { Updatr } from 'https://cdn.jsdelivr.net/gh/hertonwork/JsUpdatr@v2/src/index.min.js';
     // As an example, let's say we have an object coming from the backend and set as state
-    observe(document.state)
+    Updatr.observe(document.state)
     const modelExist = (model) => document.state.hasOwnProperty(model);
 
     // Finding elements that will be used to control the data or "model"
@@ -22,7 +22,7 @@ This is a very simple observer that can be used to bind an input value to an ele
 
     // Finding elements that will be used to show the data or "view" and add to the watch list
     document.querySelectorAll('[data-watch]').forEach(element => {
-        if (modelExist(element.dataset.watch)) watcher.run(() => {
+        if (modelExist(element.dataset.watch)) Updatr.run(() => {
             element.textContent = document.state[element.dataset.watch];
         })
     })
@@ -34,7 +34,7 @@ This is a very simple observer that can be used to bind an input value to an ele
         attributes.forEach(attributesSet => {
             let [model, attribute] = attributesSet.split(':');
             if (modelExist(model) && attribute) {
-                watcher.run(() => {
+                Updatr.run(() => {
                     element.setAttribute(attribute, document.state[model]);
                 })
             }
