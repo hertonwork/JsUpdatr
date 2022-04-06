@@ -40,7 +40,7 @@
             grid-gap: 2vh;
         }
     </style>
-    
+
     <!-- JsUpdatr example State -->
     <script type="text/javascript">
         document.state = {
@@ -57,7 +57,7 @@
 
 <body>
     <main>
-        <h2>JsUpdatr</h2>
+        <h2><a href="https://github.com/hertonwork/JsUpdatr">JsUpdatr</a></h2>
         <section class="full-section">
             <article>
                 <h3>Data Models</h3>
@@ -109,12 +109,12 @@
                     I like <em data-watch="text"></em> and my favorites are <em data-watch="favorites"></em>
                 </p>
                 <p>
-                    Sagittis purus sit amet volutpat <em data-watch="text"></em> mauris nunc. Sed risus ultricies tristique nulla aliquet. Aliquet nibh praesent tristique magna sit amet purus. Leo integer malesuada nunc vel. 
-                    Aliquet porttitor lacus luctus accumsan tortor <em data-watch="favorites"></em>. 
-                    <em data-watch="name"></em> Sed pulvinar proin gravida hendrerit lectus a. Blandit turpis cursus in hac habitasse platea dictumst quisque. 
-                    <em data-watch="name"></em> Pellentesque habitant morbi tristique senectus et netus et malesuada. Enim nec dui nunc mattis enim. Vel quam elementum pulvinar etiam non quam lacus. 
-                    <em data-watch="name"></em> Pellentesque dignissim enim sit amet. Et molestie ac feugiat sed lectus <em data-watch="favorites"></em>. 
-                    <em data-watch="name"></em> Rhoncus urna neque viverra justo nec ultrices dui. Aliquet lectus proin nibh nisl condimentum id venenatis. Vulputate enim nulla aliquet porttitor lacus luctus accumsan. Sodales ut eu sem integer vitae justo eget. 
+                    Sagittis purus sit amet volutpat <em data-watch="text"></em> mauris nunc. Sed risus ultricies tristique nulla aliquet. Aliquet nibh praesent tristique magna sit amet purus. Leo integer malesuada nunc vel.
+                    Aliquet porttitor lacus luctus accumsan tortor <em data-watch="favorites"></em>.
+                    <em data-watch="name"></em> Sed pulvinar proin gravida hendrerit lectus a. Blandit turpis cursus in hac habitasse platea dictumst quisque.
+                    <em data-watch="name"></em> Pellentesque habitant morbi tristique senectus et netus et malesuada. Enim nec dui nunc mattis enim. Vel quam elementum pulvinar etiam non quam lacus.
+                    <em data-watch="name"></em> Pellentesque dignissim enim sit amet. Et molestie ac feugiat sed lectus <em data-watch="favorites"></em>.
+                    <em data-watch="name"></em> Rhoncus urna neque viverra justo nec ultrices dui. Aliquet lectus proin nibh nisl condimentum id venenatis. Vulputate enim nulla aliquet porttitor lacus luctus accumsan. Sodales ut eu sem integer vitae justo eget.
                     Feugiat sed lectus vestibulum mattis. Eget mauris pharetra et ultrices neque ornare aenean.
                      In eu mi bibendum neque egestas congue quisque <em data-watch="favorites"></em>.
                 </p>
@@ -143,7 +143,7 @@
             })
         })
         // Finding element attributes that will be set based on the model data
-        // Example: data-watch-attributes="smallest:min,largest:max" 
+        // Example: data-watch-attributes="smallest:min,largest:max"
         // Where max and min are the attributes and smallest anj largest are the models
         document.querySelectorAll('[data-watch-attributes]').forEach(element => {
             element.dataset.watchAttributes.split(',').forEach(attributesSet => {
