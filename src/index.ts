@@ -9,11 +9,17 @@
  * We use the observe method to intercept each property of the state
  */
 class JsUpdatr {
-    private static instance: JsUpdatr;
+    private static instance?: JsUpdatr;
     private activeAction: Function | null;
 
     constructor() {
         this.activeAction = null;
+    }
+
+    public static destroyInstance(): void {
+        if (JsUpdatr.instance) {
+            delete JsUpdatr.instance;
+        }
     }
 
     public static getInstance(): JsUpdatr {
