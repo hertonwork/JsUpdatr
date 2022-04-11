@@ -80,7 +80,10 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+
+# Ignore everything in dist folder except for eslint config
+/dist/*
+!/dist/index.js
 
 # Gatsby files
 .cache/
