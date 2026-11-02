@@ -1,11 +1,29 @@
 {
     "name": "js_updatr",
-    "version": "1.0.0",
-    "description": "minimalistic library to load data onto the DOM and have it synced with HTML elements",
-    "main": "src/index.js",
+    "version": "3.0.0",
+    "description": "Tiny reactive state + HTML attribute bindings for server-rendered pages. No build, no dependencies, nothing eval'd.",
     "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./iife": "./dist/jsupdatr.min.js",
+        "./lite": "./lite/jsupdatr-lite.min.js"
+    },
+    "files": [
+        "dist",
+        "lite",
+        "src"
+    ],
+    "sideEffects": true,
     "scripts": {
-        "test": "node test/index.js --coverage-report=lcov",
+        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=JsUpdatr --target=es2022 --outfile=dist/jsupdatr.min.js",
+        "test": "npm run build && node --test test/index.test.mjs",
+        "test:browser": "node test/dom.test.mjs",
         "test:lite": "node --test lite/core.test.mjs",
         "test:lite:browser": "node lite/dom.test.mjs"
     },
@@ -15,8 +33,13 @@
     },
     "keywords": [
         "JsUpdatr",
+        "reactive",
+        "reactivity",
+        "data-binding",
         "observer",
-        "watcher"
+        "watcher",
+        "tiny",
+        "no-build"
     ],
     "author": "Herton Fontineli <d@ntas.cc> (http://fontineli.com/)",
     "license": "MPL-2.0",
@@ -24,7 +47,11 @@
         "url": "https://github.com/hertonwork/JsUpdatr/issues"
     },
     "homepage": "https://github.com/hertonwork/JsUpdatr#readme",
+    "engines": {
+        "node": ">=20"
+    },
     "devDependencies": {
-        "tap": "^16.0.1"
+        "esbuild": "^0.28.2",
+        "typescript": "^7.0.2"
     }
 }
