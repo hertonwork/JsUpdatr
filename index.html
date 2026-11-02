@@ -4,163 +4,374 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
-  <title>Minim — the smallest HTML-first reactive library</title>
-  <meta name="description" content="Minim: reactive state for server-rendered HTML in 1.2 KB. No build, no dependencies, nothing eval'd, zero JavaScript on the page. This page is the demo.">
-  <link rel="icon" href="favicon.ico">
+  <meta name="theme-color" content="#1f883d">
+  <title>Minim — reactive HTML in 1.2 KB</title>
+  <meta name="description" content="Minim binds the HTML your server already rendered to a JSON state tag. 1.2 KB, no build step, no dependencies, nothing eval'd, zero JavaScript on the page. This page is the demo.">
+  <link rel="canonical" href="https://hertonwork.github.io/minim/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231f883d'/%3E%3Ctext x='32' y='45' font-family='system-ui,sans-serif' font-weight='700' font-size='38' text-anchor='middle' fill='%23fff'%3Em%3C/text%3E%3C/svg%3E">
 
-  <!-- Styling: concrete.css, a 1.1 KB classless stylesheet. Two tiny libraries, one page, no classes anywhere. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/concrete.css@3.1.0/concrete.min.css">
+  <!-- Everything this page needs is in this file: the styles below, Minim at the end of <body>. No requests for JS or CSS. -->
   <style>
-    :root { --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --font-h: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; --main-width: 740px; --radius: 6px; }
-    html { font-size: 1.1rem; }
-    body > header { padding: 3.5rem 10px 1rem; text-align: center; }
-    body > header p { margin: .4rem 0; }
-    body > header nav { margin: 1.2rem 0 0; }
-    body > header nav a + a { margin-left: 1rem; }
-    main > section + section { border-top: .1rem solid var(--fg); }
-    article { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 2rem; }
-    article h3 { margin-top: 0; }
-    dl { margin: 0; }
-    dt { font-weight: bold; margin-top: .6rem; }
-    dd { margin: 0 0 .2rem; font-family: var(--font-h); font-size: .9em; }
-    dd::before { content: 'app.' attr(data-watch) ' = '; opacity: .55; }
-    label input { display: block; width: 100%; box-sizing: border-box; padding: .35rem .5rem; font: inherit; }
-    label input[type="checkbox"] { display: inline; width: auto; margin-right: .4rem; }
-    button { margin-right: .3rem; }
-    pre { white-space: pre-wrap; word-break: break-word; font-size: .85em; }
-    [data-todo] { border-left: .2rem solid var(--fg); padding-left: .7rem; margin: .5rem 0; }
-    kbd { font-family: var(--font-h); font-size: .9em; border: .1rem solid var(--fg); border-radius: var(--radius); padding: 0 .3rem; }
-    footer { padding: 2rem 0 3rem; font-size: .85em; }
+    :root {
+      --ground: #ffffff; --surface: #f2f4f7; --surface-2: #dfe3e9; --ink: #0b0f14; --muted: #4b5563;
+      --accent: #1f883d; --accent-text: #15692f; --accent-ink: #ffffff; --field: #0b0f14; --field-ink: #ffffff;
+      --radius: 10px; --gutter: clamp(20px, 4vw, 32px); --measure: 62ch;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --ground: #0d1117; --surface: #161b22; --surface-2: #2a313b; --ink: #e6edf3; --muted: #9ca3af;
+              --accent: #3fb950; --accent-text: #3fb950; --accent-ink: #0d1117; --field: #1f883d; --field-ink: #ffffff; }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--ground); color: var(--ink); font: 18px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-underline-offset: .15em; }
+    h1, h2, h3 { margin: 0; letter-spacing: -0.025em; line-height: 1.02; text-wrap: balance; }
+    h1 { font-size: clamp(2.6rem, 6.6vw, 5.4rem); letter-spacing: -0.035em; line-height: .95; }
+    h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); }
+    h3 { font-size: 1.25rem; letter-spacing: -0.01em; }
+    p { margin: 0; max-width: var(--measure); }
+    p + p { margin-top: 1em; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; background: var(--surface); padding: .1em .35em; border-radius: 5px; }
+    pre { margin: 0; background: var(--surface); border-radius: var(--radius); padding: 1.1rem 1.25rem; overflow: auto; font-size: .9rem; line-height: 1.55; }
+    pre code { background: none; padding: 0; font-size: inherit; }
+    kbd { font: inherit; font-weight: 700; }
+
+    /* frame */
+    .wrap { width: min(1120px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+    header.bar { display: flex; align-items: center; gap: 1.5rem; padding: 1.1rem 0; }
+    header.bar strong { font-size: 1.35rem; letter-spacing: -0.03em; margin-right: auto; }
+    header.bar nav { display: flex; gap: 1.1rem; align-items: center; }
+    header.bar nav a { text-decoration: none; font-weight: 500; white-space: nowrap; }
+    header.bar .button { padding: .5rem .95rem; }
+    main > section { padding: clamp(56px, 9vw, 140px) 0; }
+    main > section.field { background: var(--field); color: var(--field-ink); }
+    main > section.field code { background: rgb(255 255 255 / .14); }
+    main > section.tone { background: var(--surface); }
+    .cols { display: grid; gap: clamp(1.5rem, 4vw, 4rem); align-items: start; }
+    .cols > * { min-width: 0; }
+    @media (min-width: 820px) { .cols { grid-template-columns: 1fr 1fr; } .cols.wide-right { grid-template-columns: 5fr 7fr; } .cols.wide-left { grid-template-columns: 7fr 5fr; } }
+    .lede { font-size: clamp(1.15rem, 1.6vw, 1.35rem); margin-top: 1.5rem; }
+    .actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 2rem; }
+    .stack > * + * { margin-top: 1rem; }
+    .stack h2 + p, .stack h2 + .lede { margin-top: 1.25rem; }
+
+    /* controls: one accent, feedback on press/hover/focus */
+    button, .button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 0; border-radius: 999px; padding: .6rem 1.1rem; cursor: pointer; text-decoration: none; display: inline-block; transition: background .15s, transform .12s; }
+    button:hover, .button:hover { background: color-mix(in srgb, var(--surface-2), var(--ink) 10%); }
+    button:active, .button:active { transform: scale(.97); }
+    .primary, button.primary { background: var(--accent); color: var(--accent-ink); }
+    .primary:hover, button.primary:hover { background: color-mix(in srgb, var(--accent), var(--ink) 12%); }
+    .field button { background: rgb(255 255 255 / .16); color: inherit; }
+    .field button:hover { background: rgb(255 255 255 / .26); }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    label { display: block; font-weight: 600; margin-bottom: .9rem; }
+    label small { display: block; font-weight: 400; color: var(--muted); font-size: .9rem; }
+    input:not([type="checkbox"]):not([type="color"]):not([type="range"]) { display: block; width: 100%; margin-top: .3rem; font: inherit; color: var(--ink); background: var(--ground); border: 2px solid var(--surface-2); border-radius: 8px; padding: .55rem .75rem; transition: border-color .15s; }
+    input:not([type="checkbox"]):focus { border-color: var(--accent); outline: none; }
+    input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); vertical-align: -.15rem; margin-right: .4rem; }
+    input[type="range"] { width: 100%; accent-color: var(--accent); margin-top: .5rem; }
+    input[type="color"] { width: 3.2rem; height: 2.2rem; border: 0; padding: 0; background: none; vertical-align: middle; margin-left: .5rem; cursor: pointer; }
+
+    /* interface fragments: the product's own panels */
+    [data-ui] { background: var(--surface); border-radius: var(--radius); padding: 1.4rem; }
+    [data-ui] .title { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.01em; margin: 0 0 1rem; }
+    .json { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .95rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .json span { color: var(--accent-text); font-weight: 600; }
+    .big { font-size: clamp(4rem, 12vw, 9rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+    .greeting { font-size: 1.4rem; font-weight: 600; margin-top: 1rem; }
+
+    /* the todo list */
+    .todos { list-style: none; margin: 1rem 0 0; padding: 0; }
+    .todos li { display: flex; align-items: center; gap: .8rem; padding: .7rem .9rem; border-radius: 8px; background: var(--ground); margin-top: .5rem;
+                transition: opacity .35s, translate .35s; @starting-style { opacity: 0; translate: 0 -8px; } }
+    .todos li span { flex: 1; transition: color .25s; }
+    .todos li span.done { text-decoration: line-through; color: var(--muted); }
+    .todos li button { padding: .2rem .7rem; }
+    ::view-transition-group(*) { animation-duration: .3s; }
+
+    /* state → css */
+    .meter { height: 1.4rem; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin: 1rem 0 1.5rem; }
+    .meter b { display: block; height: 100%; width: calc(var(--pct, 0) * 1%); background: var(--accent); border-radius: 999px; transition: width .45s cubic-bezier(.2, .8, .2, 1), background .3s; }
+    .theme { transition: color .3s; }
+    .theme [data-ui], .theme .meter { transition: background .3s; }
+    .mark { display: inline-block; font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: var(--accent); transition: color .3s; }
+    .mark.spin { animation: spin 1.4s cubic-bezier(.65, 0, .35, 1) infinite; }
+    @keyframes spin { to { transform: rotateY(1turn); } }
+
+    /* late dom */
+    [data-todo] { background: var(--ground); border-radius: 8px; padding: .8rem 1rem; margin-top: .6rem; transition: opacity .45s, translate .45s; @starting-style { opacity: 0; translate: -12px 0; } }
+
+    dialog { border: 0; border-radius: var(--radius); background: var(--ground); color: var(--ink); padding: 1.6rem; width: min(26rem, 92vw); box-shadow: 0 24px 60px rgb(0 0 0 / .3); }
+    dialog::backdrop { background: rgb(0 0 0 / .5); }
+    dialog h3 { margin-bottom: 1rem; }
+
+    /* size */
+    .chart svg { width: 100%; height: auto; display: block; }
+    figure { margin: 0; }
+    figcaption { color: var(--muted); font-size: .95rem; margin-top: .75rem; }
+
+    footer { padding: 3rem 0 4rem; color: var(--muted); font-size: .95rem; }
+    footer p { max-width: none; }
+
+    /* entrance motion: scroll-driven, CSS only, off when the user prefers reduced motion */
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: view()) {
+        main > section > .wrap > * { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 22%; }
+        main > section > .wrap > :nth-child(2) { animation-range: entry 6% entry 28%; }
+        main > section > .wrap > :nth-child(3) { animation-range: entry 12% entry 34%; }
+      }
+    }
+    @keyframes rise { from { transform: translateY(24px); } }
+    @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
   </style>
 
   <!-- 1. State is JSON in the page. From PHP: <?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?> -->
   <script type="application/json" data-state="app" data-root="root">
-    { "name": "", "showName": false, "text": "fruit salad", "favorites": "🥥 🍓 🍍",
+    { "name": "", "showName": false, "text": "fruit salad", "favorites": "coconut, strawberry, pineapple",
       "number": 22, "largest": 23, "smallest": 11, "count": 0,
-      "user": { "city": "Punta Gorda" }, "todos": ["ship v3"] }
+      "user": { "city": "Punta Gorda" }, "todos": [{ "text": "ship v3", "done": true }, { "text": "write docs", "done": false }],
+      "level": 40, "accent": "#1f883d", "spin": false }
   </script>
 </head>
 <body>
 
-<header>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/wordmark-dark.svg">
-    <img src="docs/wordmark-light.svg" width="420" alt="minim">
-  </picture>
-  <p><b>The smallest HTML-first reactive library.</b></p>
-  <p><b>0.5 KB</b> core &nbsp;·&nbsp; <b>1.2 KB</b> with everything &nbsp;·&nbsp; zero JavaScript on the page &nbsp;·&nbsp; nothing <code>eval</code>'d</p>
-  <nav>
+<header class="bar wrap">
+  <strong>minim</strong>
+  <nav aria-label="Site">
     <a href="https://github.com/hertonwork/minim">GitHub</a>
-    <a href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Paste-in snippet</a>
     <a href="https://www.npmjs.com/package/minimjs">npm</a>
-    <a href="https://github.com/hertonwork/minim/blob/main/index.html">Source of this page</a>
+    <a class="button primary" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Get the snippet</a>
   </nav>
 </header>
 
 <main id="root">
 
   <section>
-    <h2>This page is the demo</h2>
-    <p>
-      Everything here runs on Minim plus <a href="https://github.com/louismerlin/concrete.css">concrete.css</a> for looks —
-      <b>2.4 KB</b> of gzipped assets, no CSS classes, no build step. The state is a JSON tag in <code>&lt;head&gt;</code>
-      and the HTML binds to it by key. Open the console and type <kbd>app.text = "tiramisu"</kbd> — the page follows.
-      The only script written for this page is the three lines that fake a server fragment in the Late DOM demo.
-    </p>
+    <div class="wrap cols wide-left">
+      <div>
+        <h1>Reactive HTML in&nbsp;1.2&nbsp;KB.</h1>
+        <p class="lede">Minim binds the HTML your server already rendered to a JSON state tag. No build step, no dependencies, nothing <code>eval</code>'d, and not one line of JavaScript on the page. The <code>app.json</code> panel is the state of this page, live.</p>
+        <p class="actions"><a class="button primary" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Paste the 1.2 KB snippet</a> <a class="button" href="#bind">See how it binds</a></p>
+      </div>
+      <div data-ui aria-label="The page's state, live">
+        <p class="title">app.json</p>
+        <div class="json">{
+  "name": "<span data-watch="name"></span>",
+  "showName": <span data-watch="showName">false</span>,
+  "text": "<span data-watch="text">fruit salad</span>",
+  "favorites": "<span data-watch="favorites">coconut, strawberry, pineapple</span>",
+  "number": <span data-watch="number">22</span>,
+  "smallest": <span data-watch="smallest">11</span>,
+  "largest": <span data-watch="largest">23</span>,
+  "count": <span data-watch="count">0</span>,
+  "user": { "city": "<span data-watch="user.city">Punta Gorda</span>" },
+  "todos": [ <span data-watch="todos.length">2</span> items ],
+  "level": <span data-watch="level">40</span>,
+  "accent": "<span data-watch="accent">#1f883d</span>",
+  "spin": <span data-watch="spin">false</span>
+}</div>
+      </div>
+    </div>
   </section>
 
-  <section>
-    <h2>Models → views</h2>
-    <p>Inputs with <code>data-model</code> write to the state; anything with <code>data-watch</code> reads from it.
-      <code>data-bind</code> mirrors values into attributes — the number field's <code>min</code>/<code>max</code> follow the two fields under it.</p>
-    <article>
-      <div>
-        <h3>Models</h3>
-        <label>Name <input data-model="name" placeholder="type here…"></label>
+  <section class="tone" id="bind">
+    <div class="wrap cols">
+      <div class="stack">
+        <h2>It binds by key, not by expression.</h2>
+        <p>An input with <code>data-model</code> writes to the state; anything with <code>data-watch</code> reads from it; <code>data-bind</code> mirrors values into attributes. Keys can be dotted paths. There is no expression language to learn and nothing is evaluated, which is why Minim runs under a strict Content-Security-Policy.</p>
+        <p>Try it: the number field's <code>min</code> and <code>max</code> follow the two fields under it, and the greeting shows up when you tick the box.</p>
+        <pre><code>&lt;label&gt;Name &lt;input data-model="name"&gt;&lt;/label&gt;
+&lt;input type="number" data-model="number"
+       data-bind="min:smallest max:largest"&gt;
+&lt;p data-show="showName"&gt;Hello, &lt;b data-watch="name"&gt;&lt;/b&gt;&lt;/p&gt;</code></pre>
+      </div>
+      <div data-ui>
+        <p class="title">Try it</p>
+        <label>Name <input data-model="name" placeholder="Type your name"></label>
         <label>Favorites <input data-model="favorites"></label>
         <label>Text <input data-model="text"></label>
-        <label>Number, bounded by min/max <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
+        <label>Number <small>bounded by the min and max below</small> <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
         <label>Min <input type="number" data-model="smallest" data-bind="max:largest"></label>
         <label>Max <input type="number" data-model="largest" data-bind="min:smallest"></label>
-        <label>City (a nested path, <code>user.city</code>) <input data-model="user.city"></label>
+        <label>City <small>a nested path: user.city</small> <input data-model="user.city"></label>
         <label><input type="checkbox" data-model="showName"> Show the greeting</label>
+        <p class="greeting" data-show="showName" hidden>Hello, <span data-watch="name"></span>. I like <span data-watch="text">fruit salad</span> and <span data-watch="favorites">coconut, strawberry, pineapple</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="field">
+    <div class="wrap cols wide-right">
+      <div class="stack">
+        <h2>Buttons without JavaScript.</h2>
+        <p>These are plain <code>&lt;button command="--inc" commandfor="root"&gt;</code> elements. The browser's Invoker Commands API delivers the click as a <code>command</code> event and Minim applies it to the state. No handlers, no <code>onclick</code>, nothing to wire.</p>
+        <p>
+          <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
+          <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
+          <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
+          <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
+          <button type="button" commandfor="root" command="--push" data-key="todos" value="call mom">add a todo</button>
+        </p>
       </div>
       <div>
-        <h3>Views</h3>
-        <p data-show="showName">Hello, <strong data-watch="name"></strong>! 👋</p>
-        <dl>
-          <dt>Text</dt>
-          <dd data-watch="text"></dd>
-          <dd data-watch="favorites"></dd>
-          <dt>Numbers</dt>
-          <dd data-watch="number"></dd>
-          <dd data-watch="smallest"></dd>
-          <dd data-watch="largest"></dd>
-          <dt>Nested</dt>
-          <dd data-watch="user.city"></dd>
-          <dt>Counters</dt>
-          <dd data-watch="count"></dd>
-          <dd data-watch="todos.length"></dd>
-        </dl>
-        <p>I like <em data-watch="text"></em> and my favorites are <em data-watch="favorites"></em>.</p>
+        <div class="big" data-watch="count" aria-live="polite">0</div>
+        <p>clicks, and <b data-watch="todos.length">2</b> todos</p>
       </div>
-    </article>
+    </div>
   </section>
 
   <section>
-    <h2>Buttons without JavaScript</h2>
-    <p>Plain <code>&lt;button command="…" commandfor="root"&gt;</code> elements — the HTML Invoker Commands API. No handlers, no <code>onclick</code>.</p>
-    <p>
-      <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
-      <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
-      <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
-      <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
-      <button type="button" commandfor="root" command="--push" data-key="todos" value="write docs">add a todo</button>
-    </p>
-    <p>count is <b data-watch="count"></b> and there are <b data-watch="todos.length"></b> todos. <span data-show="showName">The greeting is on.</span></p>
+    <div class="wrap cols wide-left">
+      <div data-ui>
+        <p class="title">Todos</p>
+        <input data-command="keydown.Enter:--push" data-key="todos" placeholder="What needs doing? Press Enter" aria-label="New todo">
+        <ul class="todos">
+          <template data-each="todos">
+            <li>
+              <input type="checkbox" data-model="$.done" aria-label="Done">
+              <span data-watch="$.text" data-class="done:$.done"></span>
+              <button type="button" commandfor="root" command="--remove" data-key="todos" value="$i" aria-label="Remove">×</button>
+            </li>
+          </template>
+        </ul>
+      </div>
+      <div class="stack">
+        <h2>A list, animated, still no JavaScript.</h2>
+        <p>Type and press <kbd>Enter</kbd>: that's <code>data-command="keydown.Enter:--push"</code> on the input. Each item is stamped from a <code>&lt;template data-each="todos"&gt;</code> where <code>$</code> is the item, <code>$.done</code> one of its fields and <code>$i</code> its index.</p>
+        <p>Adding and removing animates through the View Transitions API where the browser has it, and with <code>@starting-style</code> everywhere else. Items pushed from the input are plain strings; the two that came with the page are objects. Mixed lists are fine.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone theme" data-bind="--accent:accent">
+    <div class="wrap">
+      <div class="stack">
+        <h2>State drives CSS, and CSS does the animation.</h2>
+        <p><code>data-bind</code> also writes CSS custom properties, and <code>data-class</code> toggles classes. The transitions and keyframes live in the stylesheet; state only flips the switch. This section's accent, the bar and the spinning mark are all driven by the keys shown in the panel at the top of the page.</p>
+      </div>
+      <div class="cols" style="margin-top: 2.5rem">
+        <div data-ui>
+          <label>Level: <span data-watch="level">40</span>% <input type="range" min="0" max="100" data-model="level" aria-label="Level"></label>
+          <div class="meter" data-bind="--pct:level" role="progressbar" aria-label="Level" aria-valuemin="0" aria-valuemax="100"><b></b></div>
+          <p>
+            <button type="button" commandfor="root" command="--inc" value="level" data-step="10">+10</button>
+            <button type="button" commandfor="root" command="--inc" value="level" data-step="-10">−10</button>
+          </p>
+        </div>
+        <div data-ui>
+          <label>Accent of this section <input type="color" data-model="accent" aria-label="Accent color"></label>
+          <p>
+            <button type="button" commandfor="root" command="--set" data-key="accent" value="#e5484d">red</button>
+            <button type="button" commandfor="root" command="--set" data-key="accent" value="#1f883d">green</button>
+            <button type="button" commandfor="root" command="--toggle" value="spin">spin</button>
+          </p>
+          <p><span class="mark" data-class="spin:spin">minim</span></p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section>
-    <h2>Late DOM</h2>
-    <p>Markup that arrives after load — a <code>fetch</code> response, an htmx swap, a PHP partial — binds itself. Removed markup lets go of its bindings.</p>
-    <div id="late"></div>
-    <p>
-      <button type="button" id="inject">inject a bound fragment</button>
-      <button type="button" id="remove">remove it</button>
-    </p>
+    <div class="wrap cols">
+      <div class="stack">
+        <h2>A native dialog, the same state.</h2>
+        <p>The browser's own <code>command="show-modal"</code> opens a <code>&lt;dialog&gt;</code>. The fields inside bind to the same keys as everything else, so the greeting and the panel at the top update behind the modal while you type.</p>
+        <p><button type="button" class="primary" commandfor="profile" command="show-modal">Edit profile</button></p>
+        <dialog id="profile">
+          <h3>Profile</h3>
+          <label>Name <input data-model="name"></label>
+          <label>City <input data-model="user.city"></label>
+          <label><input type="checkbox" data-model="showName"> Show the greeting</label>
+          <button type="button" class="primary" commandfor="profile" command="close">Done</button>
+        </dialog>
+      </div>
+      <div class="stack">
+        <h2>Markup that arrives later binds itself.</h2>
+        <p>A <code>fetch</code> response, an htmx swap, a PHP partial — anything inserted after load is picked up by a MutationObserver and bound. Removed markup lets go of its bindings. The only script written for this page is the three lines that fake the fragment below.</p>
+        <p><button type="button" id="inject">Inject a fragment</button> <button type="button" id="remove">Remove it</button></p>
+        <div id="late"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone">
+    <div class="wrap">
+      <div class="stack">
+        <h2>Size matters.</h2>
+        <p>Measured the same way for everyone: the latest npm source, terser, <code>gzip -9</code>. Minim's reactive core is the smallest on the chart, and the paste-in build with every binding on this page is a fifth the size of petite-vue and a sixteenth of Alpine.</p>
+      </div>
+      <figure class="chart" style="margin-top: 2.5rem">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 362" role="img" aria-label="Size comparison: Minim is the smallest in both groups">
+<rect width="880" height="362" fill="transparent"/>
+<text x="24" y="38" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="var(--ink)">Reactive core</text>
+<text x="856" y="38" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="var(--muted)" text-anchor="end">state + effects, min+gzip</text>
+<text x="188" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="var(--ink)" text-anchor="end">Minim core</text>
+<rect x="200" y="60" width="120" height="18" rx="4" fill="var(--accent)"/>
+<text x="328" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">516 B</text>
+<text x="188" y="103" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">usignal</text>
+<rect x="200" y="90" width="206" height="18" rx="4" fill="var(--surface-2)"/>
+<text x="414" y="103" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">882 B  ·  1.7× Minim</text>
+<text x="188" y="133" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">VanJS</text>
+<rect x="200" y="120" width="269" height="18" rx="4" fill="var(--surface-2)"/>
+<text x="477" y="133" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">1,153 B  ·  2.2× Minim</text>
+<text x="188" y="163" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">hyperactiv</text>
+<rect x="200" y="150" width="285" height="18" rx="4" fill="var(--surface-2)"/>
+<text x="493" y="163" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">1,220 B  ·  2.4× Minim</text>
+<text x="188" y="193" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">nanostores</text>
+<rect x="200" y="180" width="546" height="18" rx="4" fill="var(--surface-2)"/>
+<text x="754" y="193" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">2,339 B  ·  4.5× Minim</text>
+<text x="24" y="244" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="var(--ink)">HTML-first, no JavaScript on the page</text>
+<text x="856" y="244" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="var(--muted)" text-anchor="end">bind data-* attributes, min+gzip</text>
+<text x="188" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="var(--ink)" text-anchor="end">Minim lite (everything)</text>
+<rect x="200" y="266" width="35" height="18" rx="4" fill="var(--accent)"/>
+<text x="243" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">1,260 B</text>
+<text x="188" y="309" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">petite-vue</text>
+<rect x="200" y="296" width="194" height="18" rx="4" fill="var(--surface-2)"/>
+<text x="402" y="309" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">7,080 B  ·  5.6× Minim</text>
+<text x="188" y="339" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">Alpine.js</text>
+<rect x="200" y="326" width="546" height="18" rx="4" fill="var(--surface-2)"/>
+<text x="754" y="339" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">19,911 B  ·  16× Minim</text>
+</svg>
+        <figcaption>Bytes, minified and gzipped. The full table with brotli numbers is in the <a href="https://github.com/hertonwork/minim#the-numbers">README</a>.</figcaption>
+      </figure>
+    </div>
   </section>
 
   <section>
-    <h2>Size matters</h2>
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/size-dark.svg">
-      <img src="docs/size-light.svg" alt="Minim core: 516 B — usignal 882 B, VanJS 1,153 B, hyperactiv 1,220 B, nanostores 2,339 B. Minim lite: 1,260 B — petite-vue 7,080 B, Alpine.js 19,911 B.">
-    </picture>
-    <p><small>Same ruler for everyone: latest npm source, terser, <code>gzip -9</code>. The full table is in the <a href="https://github.com/hertonwork/minim#the-numbers">README</a>.</small></p>
-  </section>
+    <div class="wrap cols wide-left">
+      <div class="stack">
+        <h2>Use it.</h2>
+        <p>Paste the lite build into <code>&lt;head&gt;</code> and your page makes no request for a script at all, which is how this page scores what it scores. Or load the module build, which adds lists, classes, CSS variables and element commands.</p>
+        <pre><code>&lt;!-- paste-in: 1.2 KB, the snippet is in lite/README.md --&gt;
+&lt;script&gt;/* minim.min.js */&lt;/script&gt;
 
-  <section>
-    <h2>Use it</h2>
-    <pre><code>&lt;!-- ES module, auto-boots --&gt;
+&lt;!-- or the module build, auto-boots --&gt;
 &lt;script type="module" src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/index.js"&gt;&lt;/script&gt;
 
-&lt;!-- or a classic script: window.minim, auto-boots --&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/minim.min.js" defer&gt;&lt;/script&gt;</code></pre>
-    <p>Or paste the 1.2 KB lite build straight into <code>&lt;head&gt;</code> — the snippet is in
-      <a href="https://github.com/hertonwork/minim/blob/main/lite/README.md">lite/README.md</a>. From npm: <code>npm i minimjs</code>.</p>
+&lt;!-- npm --&gt;
+npm i minimjs</code></pre>
+      </div>
+      <div class="stack">
+        <h3>What a page needs</h3>
+        <p>A JSON state tag. Attributes that name keys: <code>data-model</code>, <code>data-watch</code>, <code>data-show</code>, <code>data-bind</code>, <code>data-class</code>, <code>data-each</code>, <code>data-command</code>. Buttons with <code>command</code>. That's the whole API.</p>
+        <p class="actions"><a class="button primary" href="https://github.com/hertonwork/minim">Read the README</a></p>
+      </div>
+    </div>
   </section>
 
 </main>
 
 <footer>
-  <p>MPL-2.0 · a <i>minim</i> is the smallest unit of liquid measure, and a palindrome · <a href="https://github.com/hertonwork/minim">hertonwork/minim</a></p>
+  <div class="wrap">
+    <p>MPL-2.0. A <i>minim</i> is the smallest unit of liquid measure, and a palindrome. Made in Florida by <a href="https://github.com/hertonwork">Herton</a>. <a href="https://github.com/hertonwork/minim/blob/main/index.html">Source of this page</a>.</p>
+  </div>
 </footer>
 
-<!-- 2. Minim. Everything above is wired by the time this finishes evaluating. -->
-<script type="module" src="./dist/index.js"></script>
+<!-- 2. Minim, inlined (dist/minim.min.js). Everything above is wired by the time this finishes evaluating. -->
+<script>"use strict";var minim=(()=>{var M=Object.defineProperty;var V=Object.getOwnPropertyDescriptor;var z=Object.getOwnPropertyNames;var F=Object.prototype.hasOwnProperty;var U=(e,t)=>{for(var r in t)M(e,r,{get:t[r],enumerable:!0})},G=(e,t,r,n)=>{if(t&&typeof t=="object"||typeof t=="function")for(let o of z(t))!F.call(e,o)&&o!==r&&M(e,o,{get:()=>t[o],enumerable:!(n=V(t,o))||n.enumerable});return e};var Q=e=>G(M({},"__esModule",{value:!0}),e);var te={};U(te,{JsUpdatr:()=>_,bind:()=>j,boot:()=>L,default:()=>ee,effect:()=>f,minim:()=>P,reactive:()=>y,tick:()=>B});var v=null,E=new Set,O=!1,C=class{constructor(t,r){this.fn=t;r?.addEventListener("abort",()=>this.dispose(),{once:!0}),this.run()}fn;deps=new Set;disposed=!1;run(){if(this.disposed)return;for(let r of this.deps)r.delete(this);this.deps.clear();let t=v;v=this;try{this.fn()}finally{v=t}}dispose(){this.disposed=!0;for(let t of this.deps)t.delete(this);this.deps.clear()}};function X(e){E.add(e),O||(O=!0,queueMicrotask(Y))}function Y(){let e=0;try{for(;E.size;){if(++e>100){E.clear(),console.error("minim: effect loop (an effect keeps writing what it reads)");break}let t=[...E];E.clear();for(let r of t)r.run()}}finally{O=!1}}var x=Symbol("iterate"),N=Symbol("raw"),H=new WeakMap,K=new WeakMap;function $(e,t){if(!v)return;let r=H.get(e);r||H.set(e,r=new Map);let n=r.get(t);n||r.set(t,n=new Set),n.add(v),v.deps.add(n)}function b(e,t){let r=H.get(e)?.get(t);if(r)for(let n of r)X(n)}function y(e){if(e===null||typeof e!="object"||e[N])return e;let t=K.get(e);if(t)return t;let r=new Proxy(e,{get(n,o,s){if(o===N)return n;$(n,o);let i=Reflect.get(n,o,s);return i!==null&&typeof i=="object"?y(i):i},set(n,o,s,i){let a=Object.hasOwn(n,o),d=n[o],u=Reflect.set(n,o,s?.[N]??s,i);return a?Object.is(d,s)||b(n,o):(b(n,o),b(n,x),Array.isArray(n)&&b(n,"length")),u},deleteProperty(n,o){let s=Object.hasOwn(n,o),i=Reflect.deleteProperty(n,o);return s&&(b(n,o),b(n,x)),i},has(n,o){return $(n,o),Reflect.has(n,o)},ownKeys(n){return $(n,x),Reflect.ownKeys(n)}});return K.set(e,r),r}function f(e,{signal:t}={}){let r=new C(e,t);return()=>r.dispose()}var B=()=>Promise.resolve(),T="[data-model],[data-watch],[data-show],[data-bind],[data-class],[data-each],[data-command]",S=new WeakSet,m=(e,t,r)=>r&&t[0]==="$"?t==="$i"?r.$i:t==="$"?r.$:m(r.$,t.slice(2)):t.split(".").reduce((n,o)=>n?.[o],e),k=(e,t,r,n)=>{if(n&&t[0]==="$"){if(t==="$"){n.list[n.$i]=r;return}e=n.$,t=t.slice(2)}let o=t.split("."),s=o.pop();o.reduce((i,a)=>i[a],e)[s]=r},q=e=>e==="true"?!0:e==="false"?!1:e!==""&&!isNaN(Number(e))?Number(e):e,W=e=>e.trim().split(/\s+/).map(t=>t.split(":")).filter(([t,r])=>t&&r);function I(e,t,r,n){let o=r,s=o.dataset,i=s.key??o.value,a=m(e,i,n);switch(t){case"--set":k(e,s.key,q(o.value),n);break;case"--toggle":k(e,i,!a,n);break;case"--inc":k(e,i,(a||0)+Number(s.step??1),n);break;case"--push":o.value!==""&&(a.push(q(o.value)),o instanceof HTMLInputElement&&(o.value=""));break;case"--remove":a.splice(Number(o.value),1);break}}var Z=0;function D(e,t,r,n){if(S.has(e))return;S.add(e),r.addEventListener("abort",()=>S.delete(e),{once:!0});let o=e.dataset;if(o.model!=null){let s=e,i=s.type==="checkbox",a=s.type==="number"||s.type==="range",d=()=>i?s.checked:a&&s.value!==""?s.valueAsNumber:s.value;f(()=>{let u=m(t,o.model,n)??"";i?s.checked=!!u:s.value!==String(u)&&(s.value=String(u))},{signal:r}),s.addEventListener("input",()=>k(t,o.model,d(),n),{signal:r})}if(o.watch!=null&&f(()=>{e.textContent=String(m(t,o.watch,n)??"")},{signal:r}),o.show!=null&&f(()=>{e.hidden=!m(t,o.show,n)},{signal:r}),o.bind!=null)for(let[s,i]of W(o.bind))f(()=>{let a=m(t,i,n),d=a==null||a===!1;s.startsWith("--")?d?e.style.removeProperty(s):e.style.setProperty(s,String(a)):d?e.removeAttribute(s):e.setAttribute(s,a===!0?"":String(a))},{signal:r});if(o.class!=null)for(let[s,i]of W(o.class))f(()=>{e.classList.toggle(s,!!m(t,i,n))},{signal:r});if(o.command!=null){let[s,i]=o.command.split(":"),[a,d]=s.split(".");e.addEventListener(a,u=>{(!d||u.key===d)&&I(t,i,e,n)},{signal:r})}if(o.each!=null&&e instanceof HTMLTemplateElement){let s=Z++,i=[],a,d=!0;r.addEventListener("abort",()=>a?.abort(),{once:!0}),f(()=>{let u=m(t,o.each,n),c=Array.isArray(u)?[...u]:[],l=()=>{a?.abort(),a=new AbortController,i.forEach(g=>g.remove()),i=[],c.forEach((g,A)=>{let h=e.content.cloneNode(!0),J={$:g,$i:A,list:u};h.querySelectorAll("*").forEach(p=>{for(let w of p.attributes)w.value==="$i"?w.value=String(A):w.value==="$"&&(w.value=String(g))}),h.querySelectorAll(T).forEach(p=>D(p,t,a.signal,J));for(let p of h.childNodes)p instanceof HTMLElement&&(p.style.viewTransitionName=`minim-${s}-${A}`);i.push(...h.childNodes),e.before(h)})},R=document.startViewTransition;d||!R?l():R.call(document,l),d=!1},{signal:r})}}function j(e,t,{commands:r=!0}={}){let n=new AbortController,{signal:o}=n,s=new WeakMap,i=c=>{if(s.has(c)||S.has(c))return;let l=new AbortController;o.addEventListener("abort",()=>l.abort(),{once:!0}),s.set(c,l),D(c,t,l.signal)},a=c=>{c instanceof Element&&(c.matches(T)&&i(c),c.querySelectorAll(T).forEach(i))},d=c=>{if(c instanceof Element)for(let l of[c,...c.querySelectorAll(T)])s.get(l)?.abort(),s.delete(l)};a(e);let u=new MutationObserver(c=>{for(let l of c)l.removedNodes.forEach(d),l.addedNodes.forEach(a)});return u.observe(e,{childList:!0,subtree:!0}),o.addEventListener("abort",()=>u.disconnect(),{once:!0}),r&&("command"in HTMLButtonElement.prototype?e.addEventListener("command",c=>{let l=c;l.command.startsWith("--")&&I(t,l.command,l.source)},{signal:o}):e.addEventListener("click",c=>{let l=c.target.closest('button[command^="--"]');l&&l.getAttribute("commandfor")===e.id&&I(t,l.getAttribute("command"),l)},{signal:o})),n}function L(e=document){e.querySelectorAll('script[type="application/json"][data-state]').forEach(t=>{let r=t.dataset.state||"state",n=y(JSON.parse(t.textContent||"{}"));globalThis[r]=n;let o=t.dataset.root&&e.getElementById(t.dataset.root)||e.body;j(o,n)})}typeof document<"u"&&(document.body?L():document.addEventListener("DOMContentLoaded",()=>L()));var P={reactive:y,effect:f,bind:j,tick:B,boot:L,observe:y,run:f},_=P,ee=P;return Q(te);})();</script>
 
-<!-- Demo-only: fake a server fragment arriving later, so the Late DOM section has something to show. -->
-<script type="module">
+<!-- Demo-only: fake a server fragment arriving later, so the late-DOM demo has something to show. -->
+<script>
   document.getElementById('inject').onclick = () => document.getElementById('late').insertAdjacentHTML('beforeend',
     '<p data-todo>A fragment inserted after load. It sees name = <em data-watch="name"></em></p>');
   document.getElementById('remove').onclick = () => document.querySelector('[data-todo]')?.remove();

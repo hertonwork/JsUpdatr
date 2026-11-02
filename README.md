@@ -8,7 +8,7 @@
 <h3 align="center">The smallest HTML-first reactive library.</h3>
 
 <p align="center">
-  <b>0.5 KB</b> core &nbsp;·&nbsp; <b>1.2 KB</b> with everything &nbsp;·&nbsp; zero JavaScript on the page &nbsp;·&nbsp; nothing <code>eval</code>'d
+  <b>0.5 KB</b> core &nbsp;·&nbsp; <b>1.2 KB</b> paste-in &nbsp;·&nbsp; <b>2.5 KB</b> with lists, classes and animation &nbsp;·&nbsp; zero JavaScript on the page &nbsp;·&nbsp; nothing <code>eval</code>'d
 </p>
 
 <p align="center">
@@ -50,7 +50,8 @@ Open the console and type `app.count = 100` — the page follows.
 - **Nothing is `eval`'d.** Attributes name state *keys*, never expressions, so it runs under a strict Content-Security-Policy. Alpine needs `unsafe-eval`; Minim doesn't.
 - **Buttons work without JavaScript.** `command="--inc"` / `--toggle` / `--set` / `--push` ride the HTML Invoker Commands API that every current browser ships.
 - **Late markup binds itself.** Fragments from `fetch`, htmx swaps or server partials are picked up automatically; removed elements release their bindings.
-- **Tiny because it's narrow.** Four attributes, four commands, dotted paths. No expression language, no loops, no templates — reach for Alpine or Vue when you need those.
+- **Tiny because it's narrow.** Seven attributes, five commands, dotted paths. No expression language — state names keys, CSS does the animation, `<template>` does the lists. Reach for Alpine or Vue when you need expressions.
+- **It scores 100.** [The demo page](https://hertonwork.github.io/minim/) ships as one HTML file with Minim inlined: one request, Lighthouse 100/100/100/100 on mobile and desktop.
 
 A *minim* is the smallest unit of liquid measure. It's also a palindrome. Formerly published as JsUpdatr.
 
@@ -96,9 +97,16 @@ From PHP: `<script type="application/json" data-state="app"><?= json_encode($sta
 | `data-model="key"` | `input`, `textarea`, `select` | Two-way. Checkboxes use `checked`; `type=number`/`range` store Numbers. |
 | `data-watch="key"` | any element | Sets `textContent` to the value. |
 | `data-show="key"` | any element | Toggles the `hidden` attribute (truthy = shown). |
-| `data-bind="attr:key attr2:key2"` | any element | Mirrors values into attributes. `false`/`null` removes the attribute, `true` sets it empty. |
+| `data-bind="attr:key --var:key"` | any element | Mirrors values into attributes, or into CSS custom properties when the name starts with `--`. `false`/`null` removes, `true` sets empty. |
+| `data-class="name:key"` | any element | Toggles a class on the truthiness of the key. Pair it with CSS transitions and keyframes. |
+| `data-each="key"` | `<template>` | Stamps the template once per item of the array. Inside: `$` is the item, `$.field` one of its fields, `$i` its index; attribute values that are exactly `$i` or `$` are substituted. Re-renders through the View Transitions API where available. |
+| `data-command="event:--cmd"` | any element | Runs a command on a DOM event, e.g. `keydown.Enter:--push` (the part after the dot filters `event.key`). The element supplies `value`, `data-key`, `data-step`. |
 
 Keys can be dotted paths: `data-model="user.city"`, `data-watch="todos.length"`.
+
+Pre-render the initial state in the HTML (the initial text inside `data-watch` elements, `hidden` on `data-show` elements that
+start hidden): Minim then only keeps it in sync, and nothing moves on load. Markup inserted later (`fetch` +
+`insertAdjacentHTML`, htmx swaps, server fragments) is bound automatically; removed elements release their bindings.
 
 ### Buttons
 
@@ -118,7 +126,8 @@ Keys can be dotted paths: `data-model="user.city"`, `data-watch="todos.length"`.
 | `--inc` | `value` = key, `data-step` (default 1) | `state[key] += step` |
 | `--toggle` | `value` = key | `state[key] = !state[key]` |
 | `--set` | `data-key`, `value` | `state[key] = value` (numeric strings become Numbers) |
-| `--push` | `data-key` (an array), `value` | `state[key].push(value)` |
+| `--push` | `data-key` (an array), `value` | `state[key].push(value)`; from an input, clears it afterwards |
+| `--remove` | `data-key` (an array), `value` = index | `state[key].splice(index, 1)` |
 
 ### JavaScript API
 
@@ -141,8 +150,9 @@ ctrl.abort();                                         // that tears down every e
 An effect that writes what it reads is stopped after 100 rounds with a `console.error` instead of freezing the tab.
 Types ship with the package (`dist/index.d.ts`).
 
-**Module build vs lite:** same attributes and commands. The module build also tracks `Object.keys(state)` inside
-effects, has a click fallback for browsers without `command` events, and exposes `AbortController` teardown.
+**Module build vs lite:** the paste-in lite has `data-model` / `data-watch` / `data-show` / `data-bind` and the four basic
+commands. The module build (2.5 KB) adds `data-class`, `data-each`, `data-command`, CSS-variable binds, `--remove`, tracking of
+`Object.keys(state)` inside effects, a click fallback for browsers without `command` events, and `AbortController` teardown.
 
 ## The numbers
 
@@ -175,13 +185,14 @@ Regenerate the chart after editing the numbers: `node docs/size-chart.mjs`. Curr
 
 ```sh
 npm install
-npm test               # builds dist/ and lite/ (tsc + esbuild), regenerates lite/README.md, runs the node:test suite
+npm test               # builds dist/, lite/ and index.html (tsc + esbuild), regenerates lite/README.md, runs the node:test suite
 npm run test:browser   # headless-Chromium checks against index.html (needs `npm i -D playwright`)
 npm run test:lite      # the lite build's tests
 npm run size           # current lite size
 ```
 
-The demo at [hertonwork.github.io/minim](https://hertonwork.github.io/minim) is `index.html` in this repo.
+The demo at [hertonwork.github.io/minim](https://hertonwork.github.io/minim) is built from `docs/index.template.html` with
+`dist/minim.min.js` and the size chart inlined (`npm run build:page`); edit the template, not `index.html`.
 
 ## License
 

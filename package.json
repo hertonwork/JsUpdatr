@@ -1,7 +1,7 @@
 {
     "name": "minimjs",
     "version": "3.0.0",
-    "description": "Minim — the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
+    "description": "Minim \u2014 the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
     "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -21,13 +21,15 @@
     ],
     "sideEffects": true,
     "scripts": {
-        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=minim --target=es2022 --outfile=dist/minim.min.js && npm run build:lite",
+        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=minim --target=es2022 --outfile=dist/minim.min.js && npm run build:lite && npm run build:page",
         "build:lite": "esbuild lite/minim.js --minify --target=es2022 --outfile=lite/minim.min.js && node lite/build.mjs",
         "test": "npm run build && node --test test/index.test.mjs",
         "test:browser": "node test/dom.test.mjs",
         "test:lite": "node --test lite/core.test.mjs",
         "test:lite:browser": "node lite/dom.test.mjs",
-        "size": "node lite/build.mjs --size"
+        "size": "node lite/build.mjs --size",
+        "build:page": "node docs/build-page.mjs",
+        "chart": "node docs/size-chart.mjs"
     },
     "repository": {
         "type": "git",

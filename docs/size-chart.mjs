@@ -29,6 +29,8 @@ const panels = [
 ];
 
 const themes = {
+  // 'inline' uses the page's CSS variables, so the SVG can be inlined once and follow light/dark automatically
+  inline: { bg: 'transparent', text: 'var(--ink)', muted: 'var(--muted)', bar: 'var(--surface-2)', accent: 'var(--accent)', accentText: 'var(--ground)', grid: 'var(--surface-2)' },
   light: { bg: 'transparent', text: '#1f2328', muted: '#59636e', bar: '#d0d7de', accent: '#1f883d', accentText: '#ffffff', grid: '#d0d7de' },
   dark:  { bg: 'transparent', text: '#e6edf3', muted: '#9198a1', bar: '#3d444d', accent: '#3fb950', accentText: '#0d1117', grid: '#3d444d' },
 };
@@ -81,7 +83,8 @@ function wordmark(t) {
 }
 
 for (const [name, t] of Object.entries(themes)) {
-  await writeFile(path.join(dir, `size-${name}.svg`), chart(t));
-  await writeFile(path.join(dir, `wordmark-${name}.svg`), wordmark(t));
+  const strip = (svg) => name === 'inline' ? svg.replace(/ width="\d+" height="\d+"/, '') : svg;   // page sizes inline SVGs with CSS
+  await writeFile(path.join(dir, `size-${name}.svg`), strip(chart(t)));
+  await writeFile(path.join(dir, `wordmark-${name}.svg`), strip(wordmark(t)));
 }
 console.log('docs: wrote size-{light,dark}.svg and wordmark-{light,dark}.svg');
