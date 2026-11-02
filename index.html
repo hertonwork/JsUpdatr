@@ -3,17 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Minim example</title>
+  <meta name="color-scheme" content="light dark">
+  <title>Minim — the smallest HTML-first reactive library</title>
+  <meta name="description" content="Minim: reactive state for server-rendered HTML in 1.2 KB. No build, no dependencies, nothing eval'd, zero JavaScript on the page. This page is the demo.">
+  <link rel="icon" href="favicon.ico">
+
+  <!-- Styling: concrete.css, a 1.1 KB classless stylesheet. Two tiny libraries, one page, no classes anywhere. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/concrete.css@3.1.0/concrete.min.css">
   <style>
-    body { font: 16px/1.5 system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-    section { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-    label { display: block; margin: .5rem 0; }
-    dd::before { content: 'app.' attr(data-watch) ' = '; color: #888; }
-    button { margin: .2rem; }
-    [data-todo] { padding: .25rem .5rem; border-left: 3px solid #4a7; margin: .25rem 0; }
+    :root { --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --font-h: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; --main-width: 740px; --radius: 6px; }
+    html { font-size: 1.1rem; }
+    body > header { padding: 3.5rem 10px 1rem; text-align: center; }
+    body > header p { margin: .4rem 0; }
+    body > header nav { margin: 1.2rem 0 0; }
+    body > header nav a + a { margin-left: 1rem; }
+    main > section + section { border-top: .1rem solid var(--fg); }
+    article { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 2rem; }
+    article h3 { margin-top: 0; }
+    dl { margin: 0; }
+    dt { font-weight: bold; margin-top: .6rem; }
+    dd { margin: 0 0 .2rem; font-family: var(--font-h); font-size: .9em; }
+    dd::before { content: 'app.' attr(data-watch) ' = '; opacity: .55; }
+    label input { display: block; width: 100%; box-sizing: border-box; padding: .35rem .5rem; font: inherit; }
+    label input[type="checkbox"] { display: inline; width: auto; margin-right: .4rem; }
+    button { margin-right: .3rem; }
+    pre { white-space: pre-wrap; word-break: break-word; font-size: .85em; }
+    [data-todo] { border-left: .2rem solid var(--fg); padding-left: .7rem; margin: .5rem 0; }
+    kbd { font-family: var(--font-h); font-size: .9em; border: .1rem solid var(--fg); border-radius: var(--radius); padding: 0 .3rem; }
+    footer { padding: 2rem 0 3rem; font-size: .85em; }
   </style>
 
-  <!-- 1. State is plain JSON in the page. From PHP: <?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?> -->
+  <!-- 1. State is JSON in the page. From PHP: <?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?> -->
   <script type="application/json" data-state="app" data-root="root">
     { "name": "", "showName": false, "text": "fruit salad", "favorites": "🥥 🍓 🍍",
       "number": 22, "largest": 23, "smallest": 11, "count": 0,
@@ -21,60 +41,128 @@
   </script>
 </head>
 <body>
+
+<header>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/wordmark-dark.svg">
+    <img src="docs/wordmark-light.svg" width="420" alt="minim">
+  </picture>
+  <p><b>The smallest HTML-first reactive library.</b></p>
+  <p><b>0.5 KB</b> core &nbsp;·&nbsp; <b>1.2 KB</b> with everything &nbsp;·&nbsp; zero JavaScript on the page &nbsp;·&nbsp; nothing <code>eval</code>'d</p>
+  <nav>
+    <a href="https://github.com/hertonwork/minim">GitHub</a>
+    <a href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Paste-in snippet</a>
+    <a href="https://www.npmjs.com/package/minimjs">npm</a>
+    <a href="https://github.com/hertonwork/minim/blob/main/index.html">Source of this page</a>
+  </nav>
+</header>
+
 <main id="root">
-  <h2><a href="https://github.com/hertonwork/minim">Minim</a></h2>
+
   <section>
-    <article>
-      <h3>Models</h3>
-      <label>Name <input data-model="name"></label>
-      <label>Favorites <input data-model="favorites"></label>
-      <label>Text <input data-model="text"></label>
-      <label>Number (bounded by min/max) <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
-      <label>Min <input type="number" data-model="smallest" data-bind="max:largest"></label>
-      <label>Max <input type="number" data-model="largest" data-bind="min:smallest"></label>
-      <label><input type="checkbox" data-model="showName"> show name</label>
-      <label>City (nested path) <input data-model="user.city"></label>
-    </article>
+    <h2>This page is the demo</h2>
+    <p>
+      Everything here runs on Minim plus <a href="https://github.com/louismerlin/concrete.css">concrete.css</a> for looks —
+      <b>2.4 KB</b> of gzipped assets, no CSS classes, no build step. The state is a JSON tag in <code>&lt;head&gt;</code>
+      and the HTML binds to it by key. Open the console and type <kbd>app.text = "tiramisu"</kbd> — the page follows.
+      The only script written for this page is the three lines that fake a server fragment in the Late DOM demo.
+    </p>
+  </section>
 
+  <section>
+    <h2>Models → views</h2>
+    <p>Inputs with <code>data-model</code> write to the state; anything with <code>data-watch</code> reads from it.
+      <code>data-bind</code> mirrors values into attributes — the number field's <code>min</code>/<code>max</code> follow the two fields under it.</p>
     <article>
-      <h3>Views</h3>
-      <dl>
-        <dt>Text</dt><dd data-watch="text"></dd><dd data-watch="favorites"></dd>
-        <dt>Numbers</dt><dd data-watch="number"></dd><dd data-watch="largest"></dd><dd data-watch="smallest"></dd>
-        <dt>Nested</dt><dd data-watch="user.city"></dd>
-        <dt>Count</dt><dd data-watch="count"></dd>
-      </dl>
-      <p data-show="showName">Hello, <strong data-watch="name"></strong>!</p>
-    </article>
-
-    <article>
-      <h3>Zero-JS actions (Invoker Commands)</h3>
-      <!-- Buttons declare what they do. No addEventListener on the page. -->
-      <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
-      <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
-      <button type="button" commandfor="root" command="--toggle" value="showName">toggle name</button>
-      <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
-      <button type="button" commandfor="root" command="--push" data-key="todos" value="write docs">add todo</button>
-      <p>Todos: <span data-watch="todos.length"></span></p>
-
-      <h3>Late DOM</h3>
-      <p>Markup inserted after load (fetch / htmx / PHP fragment) binds itself:</p>
-      <div id="late"></div>
-      <button type="button" id="inject">inject a bound element</button>
-      <button type="button" id="remove">remove it</button>
+      <div>
+        <h3>Models</h3>
+        <label>Name <input data-model="name" placeholder="type here…"></label>
+        <label>Favorites <input data-model="favorites"></label>
+        <label>Text <input data-model="text"></label>
+        <label>Number, bounded by min/max <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
+        <label>Min <input type="number" data-model="smallest" data-bind="max:largest"></label>
+        <label>Max <input type="number" data-model="largest" data-bind="min:smallest"></label>
+        <label>City (a nested path, <code>user.city</code>) <input data-model="user.city"></label>
+        <label><input type="checkbox" data-model="showName"> Show the greeting</label>
+      </div>
+      <div>
+        <h3>Views</h3>
+        <p data-show="showName">Hello, <strong data-watch="name"></strong>! 👋</p>
+        <dl>
+          <dt>Text</dt>
+          <dd data-watch="text"></dd>
+          <dd data-watch="favorites"></dd>
+          <dt>Numbers</dt>
+          <dd data-watch="number"></dd>
+          <dd data-watch="smallest"></dd>
+          <dd data-watch="largest"></dd>
+          <dt>Nested</dt>
+          <dd data-watch="user.city"></dd>
+          <dt>Counters</dt>
+          <dd data-watch="count"></dd>
+          <dd data-watch="todos.length"></dd>
+        </dl>
+        <p>I like <em data-watch="text"></em> and my favorites are <em data-watch="favorites"></em>.</p>
+      </div>
     </article>
   </section>
+
+  <section>
+    <h2>Buttons without JavaScript</h2>
+    <p>Plain <code>&lt;button command="…" commandfor="root"&gt;</code> elements — the HTML Invoker Commands API. No handlers, no <code>onclick</code>.</p>
+    <p>
+      <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
+      <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
+      <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
+      <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
+      <button type="button" commandfor="root" command="--push" data-key="todos" value="write docs">add a todo</button>
+    </p>
+    <p>count is <b data-watch="count"></b> and there are <b data-watch="todos.length"></b> todos. <span data-show="showName">The greeting is on.</span></p>
+  </section>
+
+  <section>
+    <h2>Late DOM</h2>
+    <p>Markup that arrives after load — a <code>fetch</code> response, an htmx swap, a PHP partial — binds itself. Removed markup lets go of its bindings.</p>
+    <div id="late"></div>
+    <p>
+      <button type="button" id="inject">inject a bound fragment</button>
+      <button type="button" id="remove">remove it</button>
+    </p>
+  </section>
+
+  <section>
+    <h2>Size matters</h2>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/size-dark.svg">
+      <img src="docs/size-light.svg" alt="Minim core: 516 B — usignal 882 B, VanJS 1,153 B, hyperactiv 1,220 B, nanostores 2,339 B. Minim lite: 1,260 B — petite-vue 7,080 B, Alpine.js 19,911 B.">
+    </picture>
+    <p><small>Same ruler for everyone: latest npm source, terser, <code>gzip -9</code>. The full table is in the <a href="https://github.com/hertonwork/minim#the-numbers">README</a>.</small></p>
+  </section>
+
+  <section>
+    <h2>Use it</h2>
+    <pre><code>&lt;!-- ES module, auto-boots --&gt;
+&lt;script type="module" src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/index.js"&gt;&lt;/script&gt;
+
+&lt;!-- or a classic script: window.minim, auto-boots --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/minim.min.js" defer&gt;&lt;/script&gt;</code></pre>
+    <p>Or paste the 1.2 KB lite build straight into <code>&lt;head&gt;</code> — the snippet is in
+      <a href="https://github.com/hertonwork/minim/blob/main/lite/README.md">lite/README.md</a>. From npm: <code>npm i minimjs</code>.</p>
+  </section>
+
 </main>
 
-<!-- 2. One tag. Everything above is already wired by the time this finishes evaluating. -->
+<footer>
+  <p>MPL-2.0 · a <i>minim</i> is the smallest unit of liquid measure, and a palindrome · <a href="https://github.com/hertonwork/minim">hertonwork/minim</a></p>
+</footer>
+
+<!-- 2. Minim. Everything above is wired by the time this finishes evaluating. -->
 <script type="module" src="./dist/index.js"></script>
 
-<!-- Demo-only helpers for the "late DOM" buttons (simulating a fetch response) -->
+<!-- Demo-only: fake a server fragment arriving later, so the Late DOM section has something to show. -->
 <script type="module">
-  document.getElementById('inject').onclick = () => {
-    document.getElementById('late').insertAdjacentHTML('beforeend',
-      '<p data-todo>Late element sees name = <em data-watch="name"></em></p>');
-  };
+  document.getElementById('inject').onclick = () => document.getElementById('late').insertAdjacentHTML('beforeend',
+    '<p data-todo>A fragment inserted after load. It sees name = <em data-watch="name"></em></p>');
   document.getElementById('remove').onclick = () => document.querySelector('[data-todo]')?.remove();
 </script>
 </body>

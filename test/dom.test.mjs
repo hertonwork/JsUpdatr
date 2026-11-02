@@ -12,7 +12,7 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { 'content-type': file.endsWith('.js') ? 'text/javascript' : 'text/html',
       // strict CSP: no inline scripts allowed except our hashed/none… we use 'self' only → demo-only inline
       // scripts would be blocked, so allow 'unsafe-inline' for the demo helpers but NO unsafe-eval.
-      'content-security-policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'" });
+      'content-security-policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net" });
     res.end(body);
   } catch { res.writeHead(404); res.end(); }
 }).listen(0);
