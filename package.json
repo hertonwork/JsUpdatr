@@ -1,30 +1,60 @@
 {
-    "name": "js_updatr",
-    "version": "1.0.0",
-    "description": "minimalistic library to load data onto the DOM and have it synced with HTML elements",
-    "main": "src/index.js",
+    "name": "minimjs",
+    "version": "3.0.0",
+    "description": "Minim — the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
     "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./iife": "./dist/minim.min.js",
+        "./lite": "./lite/minim.min.js"
+    },
+    "files": [
+        "dist",
+        "lite",
+        "src"
+    ],
+    "sideEffects": true,
     "scripts": {
-        "test": "node test/index.js --coverage-report=lcov",
+        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=minim --target=es2022 --outfile=dist/minim.min.js && npm run build:lite",
+        "build:lite": "esbuild lite/minim.js --minify --target=es2022 --outfile=lite/minim.min.js && node lite/build.mjs",
+        "test": "npm run build && node --test test/index.test.mjs",
+        "test:browser": "node test/dom.test.mjs",
         "test:lite": "node --test lite/core.test.mjs",
-        "test:lite:browser": "node lite/dom.test.mjs"
+        "test:lite:browser": "node lite/dom.test.mjs",
+        "size": "node lite/build.mjs --size"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/hertonwork/JsUpdatr"
+        "url": "git+https://github.com/hertonwork/minim"
     },
     "keywords": [
-        "JsUpdatr",
-        "observer",
-        "watcher"
+        "minim",
+        "reactive",
+        "reactivity",
+        "signals",
+        "data-binding",
+        "html-first",
+        "tiny",
+        "no-build",
+        "csp"
     ],
     "author": "Herton Fontineli <d@ntas.cc> (http://fontineli.com/)",
     "license": "MPL-2.0",
     "bugs": {
-        "url": "https://github.com/hertonwork/JsUpdatr/issues"
+        "url": "https://github.com/hertonwork/minim/issues"
     },
-    "homepage": "https://github.com/hertonwork/JsUpdatr#readme",
+    "homepage": "https://github.com/hertonwork/minim#readme",
+    "engines": {
+        "node": ">=20"
+    },
     "devDependencies": {
-        "tap": "^16.0.1"
+        "esbuild": "^0.28.2",
+        "typescript": "^7.0.2"
     }
 }
