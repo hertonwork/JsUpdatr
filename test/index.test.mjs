@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import JsUpdatr, { reactive, effect, tick } from '../dist/index.js';
+import minim, { JsUpdatr, reactive, effect, tick } from '../dist/index.js';
 
 test('basic: effect re-runs on change', async () => {
   const s = reactive({ a: 1 }); let seen;
@@ -84,7 +84,15 @@ test('effect loop is reported, not a stack overflow', async () => {
   assert.match(String(errors[0]), /effect loop/);
 });
 
-test('v2 aliases: JsUpdatr.observe / JsUpdatr.run', async () => {
+test('effect reading a key that does not exist yet re-runs when it is added', async () => {
+  const s = reactive({}); let seen;
+  effect(() => { seen = s.later; });
+  s.later = 'now'; await tick();
+  assert.equal(seen, 'now');
+});
+
+test('JsUpdatr v2 aliases: observe / run, and the JsUpdatr export', async () => {
+  assert.equal(JsUpdatr, minim);
   const state = JsUpdatr.observe({ name: 'bob', age: 22 });
   const result = {};
   JsUpdatr.run(() => { result.string = state.name; });

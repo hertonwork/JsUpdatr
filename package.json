@@ -1,7 +1,7 @@
 {
-    "name": "js_updatr",
+    "name": "minimjs",
     "version": "3.0.0",
-    "description": "Tiny reactive state + HTML attribute bindings for server-rendered pages. No build, no dependencies, nothing eval'd.",
+    "description": "Minim — the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
     "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -11,8 +11,8 @@
             "types": "./dist/index.d.ts",
             "default": "./dist/index.js"
         },
-        "./iife": "./dist/jsupdatr.min.js",
-        "./lite": "./lite/jsupdatr-lite.min.js"
+        "./iife": "./dist/minim.min.js",
+        "./lite": "./lite/minim.min.js"
     },
     "files": [
         "dist",
@@ -21,32 +21,35 @@
     ],
     "sideEffects": true,
     "scripts": {
-        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=JsUpdatr --target=es2022 --outfile=dist/jsupdatr.min.js",
+        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=minim --target=es2022 --outfile=dist/minim.min.js && npm run build:lite",
+        "build:lite": "esbuild lite/minim.js --minify --target=es2022 --outfile=lite/minim.min.js && node lite/build.mjs",
         "test": "npm run build && node --test test/index.test.mjs",
         "test:browser": "node test/dom.test.mjs",
         "test:lite": "node --test lite/core.test.mjs",
-        "test:lite:browser": "node lite/dom.test.mjs"
+        "test:lite:browser": "node lite/dom.test.mjs",
+        "size": "node lite/build.mjs --size"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/hertonwork/JsUpdatr"
+        "url": "git+https://github.com/hertonwork/minim"
     },
     "keywords": [
-        "JsUpdatr",
+        "minim",
         "reactive",
         "reactivity",
+        "signals",
         "data-binding",
-        "observer",
-        "watcher",
+        "html-first",
         "tiny",
-        "no-build"
+        "no-build",
+        "csp"
     ],
     "author": "Herton Fontineli <d@ntas.cc> (http://fontineli.com/)",
     "license": "MPL-2.0",
     "bugs": {
-        "url": "https://github.com/hertonwork/JsUpdatr/issues"
+        "url": "https://github.com/hertonwork/minim/issues"
     },
-    "homepage": "https://github.com/hertonwork/JsUpdatr#readme",
+    "homepage": "https://github.com/hertonwork/minim#readme",
     "engines": {
         "node": ">=20"
     },

@@ -1,14 +1,14 @@
-# JsUpdatr lite
+# Minim lite
 
 Reactive state for server-rendered HTML in one `<script>` you paste into `<head>`. No install, no build, no import.
 Attributes name **state keys** — never JavaScript expressions — so nothing is `eval`'d and it runs under a strict CSP.
 
-2.8 KB minified · 1.4 KB gzipped · MPL-2.0 · readable source: [`jsupdatr-lite.js`](./jsupdatr-lite.js)
+2.3 KB minified · 1.2 KB gzipped · 1.1 KB brotli · MPL-2.0 · readable source: [`minim.js`](./minim.js) · module build with types: [`../`](../)
 
 ## 1. Paste this into `<head>`
 
 ```html
-<script>(()=>{let r,p;const i=new Set,h=new WeakMap,m=new WeakMap,v=Symbol(),y=Symbol();function w(e,t){if(!r)return;let n=h.get(e);n||h.set(e,n=new Map);let s=n.get(t);s||n.set(t,s=new Set),s.add(r),r.deps.add(s)}function u(e,t){const n=h.get(e)?.get(t);n&&(n.forEach(s=>i.add(s)),p||(p=!0,queueMicrotask(x)))}function x(){let e=0;for(;i.size&&e++<100;){const t=[...i];i.clear(),t.forEach(n=>n())}i.size&&(i.clear(),console.error("JsUpdatr: effect loop")),p=!1}function g(e){const t=()=>{if(t.dead)return;t.deps.forEach(a=>a.delete(t)),t.deps.clear();const s=r;r=t;try{e(n)}finally{r=s}},n=()=>{t.dead=1,t.deps.forEach(s=>s.delete(t)),t.deps.clear()};return t.deps=new Set,t(),n}function b(e){return!e||typeof e!="object"||e[v]?e:(m.has(e)||m.set(e,new Proxy(e,{get:(t,n,s)=>n===v?t:(w(t,n),b(Reflect.get(t,n,s))),set(t,n,s,a){const o=Object.hasOwn(t,n),c=t[n],d=Reflect.set(t,n,s,a);return o?Object.is(c,s)||u(t,n):(u(t,y),Array.isArray(t)&&u(t,"length")),d},deleteProperty:(t,n)=>(Reflect.deleteProperty(t,n),u(t,n),u(t,y),!0),ownKeys:t=>(w(t,y),Reflect.ownKeys(t))})),m.get(e))}const f=(e,t)=>t.split(".").reduce((n,s)=>n?.[s],e),l=(e,t,n)=>{const s=t.split("."),a=s.pop();s.reduce((o,c)=>o[c],e)[a]=n},E=e=>e!==""&&!isNaN(e)?+e:e=="true"?!0:e=="false"?!1:e,A="[data-model],[data-watch],[data-show],[data-bind]",k=new WeakSet;function L(e,t){if(k.has(e))return;k.add(e);const n=e.dataset,s=a=>g(o=>e.isConnected?a():o());if(n.model){const a=e.type=="checkbox",o=e.type=="number"||e.type=="range";s(()=>{const c=f(t,n.model)??"";a?e.checked=!!c:e.value!=c&&(e.value=c)}),e.addEventListener("input",()=>l(t,n.model,a?e.checked:o&&e.value!==""?e.valueAsNumber:e.value))}n.watch&&s(()=>e.textContent=f(t,n.watch)??""),n.show&&s(()=>e.hidden=!f(t,n.show)),n.bind&&n.bind.split(/\s+/).forEach(a=>{const[o,c]=a.split(":");o&&c&&s(()=>{const d=f(t,c);d==null||d===!1?e.removeAttribute(o):e.setAttribute(o,d===!0?"":d)})})}function M(e,t){const n=a=>{a.matches?.(A)&&L(a,t),a.querySelectorAll?.(A).forEach(o=>L(o,t))};n(e),new MutationObserver(a=>a.forEach(o=>o.addedNodes.forEach(n))).observe(e,{childList:!0,subtree:!0});const s=(a,o)=>{const c=o.dataset.key||o.value,d=f(t,c);a=="--set"?l(t,o.dataset.key,E(o.value)):a=="--toggle"?l(t,c,!d):a=="--inc"?l(t,c,(d||0)+ +(o.dataset.step||1)):a=="--push"&&d.push(E(o.value))};return e.addEventListener("command",a=>a.command[0]=="-"&&s(a.command,a.source)),e.addEventListener("click",a=>{const o=a.target.closest('button[command^="--"]');o&&!("command"in o)&&s(o.getAttribute("command"),o)}),t}const O=()=>document.querySelectorAll('script[type="application/json"][data-state]').forEach(e=>M(document.getElementById(e.dataset.root)||document.body,window[e.dataset.state||"state"]=b(JSON.parse(e.textContent))));globalThis.JsUpdatr={reactive:b,effect:g,bind:M},typeof document<"u"&&(document.readyState=="loading"?addEventListener("DOMContentLoaded",O):O())})();</script>
+<script>"use strict";(()=>{let u,b;const i=new Set,m=new WeakMap,y=new WeakMap,v=Symbol(),M=(t,n)=>{const e=m.get(t)||m.set(t,new Map).get(t);return e.get(n)||e.set(n,new Set).get(n)},N=(t,n)=>{if(u){const e=M(t,n);e.add(u),u.d.add(e)}},w=(t,n)=>{m.get(t)?.get(n)?.forEach(e=>i.add(e)),i.size&&!b&&(b=1,queueMicrotask(q))},q=()=>{for(let t=0;i.size&&t<99;t++){const n=[...i];i.clear(),n.forEach(e=>e())}i.size&&console.error("minim: effect loop"),i.clear(),b=0},E=t=>{const n=()=>{e.d.forEach(s=>s.delete(e)),e.d.clear()},e=()=>{if(!e.x){n();const s=u;u=e;try{t(a)}finally{u=s}}},a=()=>{e.x=1,n()};return e.d=new Set,e(),a},g=t=>{if(!t||typeof t!="object"||t[v])return t;let n=y.get(t);return n||y.set(t,n=new Proxy(t,{get:(e,a)=>a==v?e:(N(e,a),g(e[a])),set(e,a,s){const c=a in e,o=e[a];return e[a]=s,(!c||!Object.is(o,s))&&w(e,a),c||Array.isArray(e)&&w(e,"length"),!0}})),n},p=(t,n)=>n.split(".").reduce((e,a)=>e?.[a],t),h=(t,n,e)=>{const a=n.split("."),s=a.pop();a.reduce((c,o)=>c[o],t)[s]=e},A=t=>t!==""&&!isNaN(t)?+t:t,C=(t,n)=>{const{model:e,watch:a,show:s,bind:c}=t.dataset,o=r=>E(d=>t.isConnected?r():d());if(e){const r=t.type=="checkbox",d=t.type=="number"||t.type=="range";o(()=>{const l=p(n,e)??"";r?t.checked=!!l:t.value!=l&&(t.value=l)}),t.oninput=()=>h(n,e,r?t.checked:d&&t.value!==""?t.valueAsNumber:t.value)}a&&o(()=>t.textContent=p(n,a)??""),s&&o(()=>t.hidden=!p(n,s)),c&&c.split(" ").forEach(r=>{const[d,l]=r.split(":");l&&o(()=>{const f=p(n,l);f==null||f===!1?t.removeAttribute(d):t.setAttribute(d,f===!0?"":f)})})},k=(t,n)=>{const e=new WeakSet,a=s=>s.querySelectorAll&&[s,...s.querySelectorAll("[data-model],[data-watch],[data-show],[data-bind]")].forEach(c=>c.dataset&&!e.has(c)&&(e.add(c),C(c,n)));a(t),new MutationObserver(s=>s.forEach(c=>c.addedNodes.forEach(a))).observe(t,{childList:1,subtree:1}),t.addEventListener("command",s=>{const c=s.source,o=s.command,r=c.dataset.key||c.value,d=p(n,r);o=="--set"?h(n,r,A(c.value)):o=="--toggle"?h(n,r,!d):o=="--inc"?h(n,r,(d||0)+ +(c.dataset.step||1)):o=="--push"&&d.push(A(c.value))})},x=()=>document.querySelectorAll('script[type="application/json"][data-state]').forEach(t=>k(document.getElementById(t.dataset.root)||document.body,globalThis[t.dataset.state||"state"]=g(JSON.parse(t.textContent))));globalThis.minim={reactive:g,effect:E,bind:k},document.readyState=="loading"?addEventListener("DOMContentLoaded",x):x()})();</script>
 ```
 
 ## 2. Put your state in the page as JSON
@@ -37,7 +37,7 @@ Keys can be dotted paths: `data-model="user.city"`, `data-watch="todos.length"`.
 
 ## 4. Buttons without any JavaScript
 
-Uses the HTML Invoker Commands API (`command` / `commandfor`, supported by all current browsers; a click fallback covers older ones).
+Uses the HTML Invoker Commands API (`command` / `commandfor`, supported by all current browsers).
 `commandfor` must point at the bound root (`<body id="…">` or the `data-root` element), and use `type="button"`.
 
 ```html
@@ -53,7 +53,7 @@ Uses the HTML Invoker Commands API (`command` / `commandfor`, supported by all c
 |---|---|---|
 | `--inc` | `value` = key, `data-step` (default 1) | `state[key] += step` |
 | `--toggle` | `value` = key | `state[key] = !state[key]` |
-| `--set` | `data-key`, `value` | `state[key] = value` (`"true"`, `"false"` and numeric strings are converted) |
+| `--set` | `data-key`, `value` | `state[key] = value` (numeric strings become Numbers) |
 | `--push` | `data-key` (an array), `value` | `state[key].push(value)` |
 
 ## 5. Complete example
@@ -63,7 +63,7 @@ Uses the HTML Invoker Commands API (`command` / `commandfor`, supported by all c
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <script>/* paste jsupdatr-lite.min.js here */</script>
+  <script>/* paste minim.min.js here */</script>
   <script type="application/json" data-state="app">{ "name": "", "count": 0, "showName": true }</script>
 </head>
 <body id="root">
@@ -78,16 +78,17 @@ Uses the HTML Invoker Commands API (`command` / `commandfor`, supported by all c
 ## JavaScript API (optional)
 
 ```js
-const state = JsUpdatr.reactive({ count: 0, items: [] });   // deep: nested objects, arrays, new keys all react
-const stop  = JsUpdatr.effect(() => console.log(state.count)); // runs now, re-runs when what it read changes
-JsUpdatr.bind(document.getElementById('widget'), state);      // bind a subtree yourself (also watches for new nodes)
-stop();                                                        // stop an effect; effects also get `stop` as their argument
+const state = minim.reactive({ count: 0, items: [] });     // deep: nested objects, arrays, new keys all react
+const stop  = minim.effect(() => console.log(state.count)); // runs now, re-runs when what it read changes
+minim.bind(document.getElementById('widget'), state);       // bind a subtree yourself (also watches for new nodes)
+stop();                                                      // stop an effect; effects also get `stop` as their argument
 ```
 
 ## Good to know
 
 - Writes are batched: ten changes in a row cause one re-render, in a microtask. Read the DOM after `await Promise.resolve()`.
 - Markup inserted later (`fetch` + `insertAdjacentHTML`, htmx swaps, PHP fragments) is bound automatically. Elements removed from the DOM release their bindings on the next update.
-- An effect that writes what it reads is stopped after 100 rounds with a `console.error`, not a frozen tab.
-- Needs a browser from 2022+ (`Proxy`, `Object.hasOwn`, optional chaining). No IE.
-- Want expressions, loops or templates? That's deliberately out of scope — reach for Alpine.js or Vue. JsUpdatr lite is for pages the server already rendered.
+- An effect that writes what it reads is stopped after 99 rounds with a `console.error`, not a frozen tab.
+- The one thing trimmed to hit the size: `Object.keys(state)` inside an effect is not tracked (array `.length` is). The module build tracks it.
+- Needs a browser from 2023+ (`Proxy`, optional chaining, `command` events — buttons with `command` do nothing on older browsers). No IE.
+- Want expressions, loops or templates? That's deliberately out of scope — reach for Alpine.js or Vue. Minim is for pages the server already rendered.

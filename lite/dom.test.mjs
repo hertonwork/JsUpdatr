@@ -1,16 +1,10 @@
-// Builds example.html (minified lite inlined in <head>) and drives it in headless Chromium.
+// Drives lite/example.html (minified lite inlined in <head>) in headless Chromium. Run `npm run build` first.
 import { chromium } from 'playwright';
 import { createServer } from 'node:http';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const dir = path.resolve('.');
-// Rebuild example.html from the template when present (keeps the inlined snippet in sync with the .min.js)
-try {
-  const min = (await readFile(path.join(dir, 'jsupdatr-lite.min.js'), 'utf8')).trim();
-  const tpl = await readFile(path.join(dir, 'example.template.html'), 'utf8');
-  await writeFile(path.join(dir, 'example.html'), tpl.replace('__MIN__', () => min));
-} catch {}
+const dir = path.dirname(new URL(import.meta.url).pathname);   // lite/
 
 const server = createServer(async (req, res) => {
   try {

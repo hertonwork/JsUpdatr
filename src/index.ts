@@ -1,12 +1,12 @@
 /**
- * JsUpdatr — tiny reactive state + HTML attribute bindings.
+ * Minim — tiny reactive state + HTML attribute bindings.
  * No build step, no dependencies, nothing eval'd (attributes name state KEYS, never expressions).
  *
  *   <script type="application/json" data-state="app">{"name":"","count":0}</script>
  *   <input data-model="name">  <span data-watch="name"></span>  <p data-show="count">…</p>
  *   <input data-bind="min:smallest max:largest">
  *   <button type="button" commandfor="root" command="--inc" value="count">+1</button>
- *   <script type="module" src="dist/index.js"></script>      (or <script src="dist/jsupdatr.min.js" defer>)
+ *   <script type="module" src="dist/index.js"></script>      (or <script src="dist/minim.min.js" defer>)
  */
 
 type Key = string | symbol;
@@ -52,7 +52,7 @@ function flush(): void {
   let rounds = 0;
   try {
     while (queue.size) {
-      if (++rounds > 100) { queue.clear(); console.error('JsUpdatr: effect loop (an effect keeps writing what it reads)'); break; }
+      if (++rounds > 100) { queue.clear(); console.error('minim: effect loop (an effect keeps writing what it reads)'); break; }
       const batch = [...queue]; queue.clear();
       for (const e of batch) e.run();
     }
@@ -92,8 +92,8 @@ export function reactive<T extends object>(obj: T): T {
       const had = Object.hasOwn(t, k);
       const old = t[k];
       const ok = Reflect.set(t, k, (v as Target)?.[RAW] ?? v, r);      // store raw objects, not proxies
-      if (!had) { trigger(t, ITERATE); if (Array.isArray(t)) trigger(t, 'length'); }   // push / new keys
-      else if (!Object.is(old, v)) trigger(t, k);                                         // NaN-safe
+      if (!had) { trigger(t, k); trigger(t, ITERATE); if (Array.isArray(t)) trigger(t, 'length'); }   // new key / push
+      else if (!Object.is(old, v)) trigger(t, k);                                                        // NaN-safe
       return ok;
     },
     deleteProperty(t, k) {
@@ -245,14 +245,17 @@ if (typeof document !== 'undefined') {
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', () => boot()) : boot();
 }
 
-/* ───────────────────────── v2 compatibility ───────────────────────── */
+/* ───────────────────────── namespace + JsUpdatr (v2) compatibility ───────────────────────── */
 
-export const JsUpdatr = {
+export const minim = {
   reactive, effect, bind, tick, boot,
-  /** @deprecated v2 name for `reactive()`. Note: v3 returns a Proxy — keep and use the returned object. */
+  /** @deprecated JsUpdatr v2 name for `reactive()`. Note: it now returns a Proxy — keep and use the returned object. */
   observe: reactive,
-  /** @deprecated v2 name for `effect()`. */
+  /** @deprecated JsUpdatr v2 name for `effect()`. */
   run: effect,
 };
 
-export default JsUpdatr;
+/** @deprecated Minim was published as JsUpdatr up to v2; this alias keeps old imports working. */
+export const JsUpdatr = minim;
+
+export default minim;

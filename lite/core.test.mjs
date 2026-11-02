@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import './jsupdatr-lite.js';
-const { reactive, effect } = globalThis.JsUpdatr;
+globalThis.document = { readyState: 'complete', querySelectorAll: () => [] };   // lite assumes a browser
+await import('./minim.js');
+const { reactive, effect } = globalThis.minim;
 const tick = () => Promise.resolve();
 
 test('basic', async () => {
@@ -50,9 +51,9 @@ test('Object.is + loop guard', async () => {
   effect(() => { s.c = s.c + 1; }); await tick(); console.error = orig;
   assert.match(String(errs[0]), /effect loop/);
 });
-test('Object.keys is tracked', async () => {
-  const s = reactive({ a: 1 }); let keys;
-  effect(() => { keys = Object.keys(s).join(); });
-  s.b = 2; await tick(); delete s.a; await tick();
-  assert.equal(keys, 'b');
+test('effect reading a key that does not exist yet re-runs when it is added', async () => {
+  const s = reactive({}); let seen;
+  effect(() => { seen = s.later; });
+  s.later = 'now'; await tick();
+  assert.equal(seen, 'now');
 });

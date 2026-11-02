@@ -85,7 +85,7 @@ typings/
 /dist/*
 !/dist/index.js
 !/dist/index.d.ts
-!/dist/jsupdatr.min.js
+!/dist/minim.min.js
 
 # Gatsby files
 .cache/
