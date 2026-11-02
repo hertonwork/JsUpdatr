@@ -42,7 +42,7 @@
     header.bar strong { font-size: 1.35rem; letter-spacing: -0.03em; margin-right: auto; }
     header.bar nav { display: flex; gap: 1.1rem; align-items: center; }
     header.bar nav a { text-decoration: none; font-weight: 500; white-space: nowrap; }
-    header.bar .button { padding: .5rem .95rem; }
+    header.bar .button { padding: .5rem .9rem; }
     main > section { padding: clamp(56px, 9vw, 140px) 0; }
     main > section.field { background: var(--field); color: var(--field-ink); }
     main > section.field code { background: rgb(255 255 255 / .14); }
@@ -51,12 +51,13 @@
     .cols > * { min-width: 0; }
     @media (min-width: 820px) { .cols { grid-template-columns: 1fr 1fr; } .cols.wide-right { grid-template-columns: 5fr 7fr; } .cols.wide-left { grid-template-columns: 7fr 5fr; } }
     .lede { font-size: clamp(1.15rem, 1.6vw, 1.35rem); margin-top: 1.5rem; }
-    .actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 2rem; }
+    .actions { margin-top: 2rem; }
     .stack > * + * { margin-top: 1rem; }
     .stack h2 + p, .stack h2 + .lede { margin-top: 1.25rem; }
 
     /* controls: one accent, feedback on press/hover/focus */
-    button, .button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 0; border-radius: 999px; padding: .6rem 1.1rem; cursor: pointer; text-decoration: none; display: inline-block; transition: background .15s, transform .12s; }
+    button, .button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 0; border-radius: 8px; padding: .65rem 1.15rem; margin: 0; cursor: pointer; text-decoration: none; display: inline-block; line-height: 1.3; transition: background .15s, transform .12s; }
+    p:has(> button), p:has(> .button), .actions { display: flex; flex-wrap: wrap; gap: .6rem; }
     button:hover, .button:hover { background: color-mix(in srgb, var(--surface-2), var(--ink) 10%); }
     button:active, .button:active { transform: scale(.97); }
     .primary, button.primary { background: var(--accent); color: var(--accent-ink); }
@@ -86,7 +87,7 @@
                 transition: opacity .35s, translate .35s; @starting-style { opacity: 0; translate: 0 -8px; } }
     .todos li span { flex: 1; transition: color .25s; }
     .todos li span.done { text-decoration: line-through; color: var(--muted); }
-    .todos li button { padding: .2rem .7rem; }
+    .todos li button { padding: .25rem .7rem; border-radius: 6px; }
     ::view-transition-group(*) { animation-duration: .3s; }
 
     /* state → css */
