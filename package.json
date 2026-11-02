@@ -5,7 +5,9 @@
     "main": "src/index.js",
     "type": "module",
     "scripts": {
-        "test": "node test/index.js --coverage-report=lcov"
+        "test": "node test/index.js --coverage-report=lcov",
+        "test:lite": "node --test lite/core.test.mjs",
+        "test:lite:browser": "node lite/dom.test.mjs"
     },
     "repository": {
         "type": "git",
