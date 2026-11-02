@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JsUpdatr lite — example</title>
+
+  <!-- 1. JsUpdatr lite, pasted inline. Nothing to install, nothing to import. -->
+  <script>__MIN__</script>
+
+  <!-- 2. Initial state as JSON. From PHP: <?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?> -->
+  <script type="application/json" data-state="app" data-root="root">
+    { "name": "", "showName": false, "text": "fruit salad", "number": 22, "largest": 23, "smallest": 11,
+      "count": 0, "user": { "city": "Punta Gorda" }, "todos": ["ship v3"] }
+  </script>
+
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; max-width: 860px; margin: 2rem auto; padding: 0 1rem; }
+    section { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+    label { display: block; margin: .5rem 0; }
+    dd::before { content: 'app.' attr(data-watch) ' = '; color: #888; }
+    [data-late] { border-left: 3px solid #4a7; padding-left: .5rem; }
+  </style>
+</head>
+<body>
+<main id="root">
+  <h2>JsUpdatr lite</h2>
+  <section>
+    <article>
+      <h3>Models</h3>
+      <label>Name <input data-model="name"></label>
+      <label>Text <input data-model="text"></label>
+      <label>Number (min/max follow state) <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
+      <label>Min <input type="number" data-model="smallest"></label>
+      <label>Max <input type="number" data-model="largest"></label>
+      <label><input type="checkbox" data-model="showName"> show greeting</label>
+      <label>City (nested) <input data-model="user.city"></label>
+    </article>
+    <article>
+      <h3>Views</h3>
+      <dl>
+        <dt>Text</dt><dd data-watch="text"></dd>
+        <dt>Number</dt><dd data-watch="number"></dd>
+        <dt>Nested</dt><dd data-watch="user.city"></dd>
+        <dt>Count</dt><dd data-watch="count"></dd>
+        <dt>Todos</dt><dd data-watch="todos.length"></dd>
+      </dl>
+      <p data-show="showName">Hello, <strong data-watch="name"></strong>!</p>
+    </article>
+    <article>
+      <h3>Buttons without JavaScript</h3>
+      <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
+      <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
+      <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
+      <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
+      <button type="button" commandfor="root" command="--push" data-key="todos" value="write docs">add todo</button>
+      <h3>Late DOM</h3>
+      <div id="late"></div>
+      <button type="button" id="inject">inject bound markup</button>
+      <button type="button" id="remove">remove it</button>
+    </article>
+  </section>
+</main>
+<!-- demo-only: simulate a fetch/htmx fragment arriving later -->
+<script>
+  inject.onclick = () => late.insertAdjacentHTML('beforeend', '<p data-late>Late element, name = <em data-watch="name"></em></p>');
+  remove.onclick = () => document.querySelector('[data-late]')?.remove();
+</script>
+</body>
+</html>

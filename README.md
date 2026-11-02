@@ -2,6 +2,14 @@
 
 This is a very simple observer that can be used to bind an input value to an element anywhere on the DOM.
 
+### Lite: paste one `<script>` and go
+
+[`lite/`](./lite/) is a self-contained version (2.8 KB minified, 1.4 KB gzipped) you paste straight into `<head>` —
+no install, no import, no build. State is a JSON `<script>` tag, bindings are `data-model` / `data-watch` /
+`data-show` / `data-bind` attributes, and buttons work through `command` / `commandfor` with zero page JavaScript.
+See [`lite/README.md`](./lite/README.md) for the snippet and the full reference, and [`lite/example.html`](./lite/example.html)
+for a working page.
+
 
 ```html
 // Example Usage
