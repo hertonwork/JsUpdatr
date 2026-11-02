@@ -21,7 +21,7 @@
     ],
     "sideEffects": true,
     "scripts": {
-        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=minim --target=es2022 --outfile=dist/minim.min.js && npm run build:lite && npm run build:page",
+        "build": "tsc && esbuild src/index.ts --bundle --minify --format=iife --global-name=minim --target=es2022 --outfile=dist/minim.min.js && npm run build:lite && npm run build:page && npm run build:skill",
         "build:lite": "esbuild lite/minim.js --minify --target=es2022 --outfile=lite/minim.min.js && node lite/build.mjs",
         "test": "npm run build && node --test test/index.test.mjs",
         "test:browser": "node test/dom.test.mjs",
@@ -29,7 +29,9 @@
         "test:lite:browser": "node lite/dom.test.mjs",
         "size": "node lite/build.mjs --size",
         "build:page": "node docs/build-page.mjs",
-        "chart": "node docs/size-chart.mjs"
+        "chart": "node docs/size-chart.mjs",
+        "build:skill": "node -e \"require('fs').copyFileSync('dist/minim.min.js','skills/minim-page/assets/minim.min.js');require('fs').copyFileSync('lite/minim.min.js','skills/minim-page/assets/minim-lite.min.js')\"",
+        "check:page": "node skills/minim-page/scripts/check.mjs index.html"
     },
     "repository": {
         "type": "git",
