@@ -1,8 +1,34 @@
-# Minim
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/wordmark-dark.svg">
+    <img src="docs/wordmark-light.svg" width="480" alt="minim">
+  </picture>
+</p>
 
-**The smallest HTML-first reactive library.** 0.5 KB core, 1.2 KB with attribute bindings, zero JavaScript on the page.
-No build step, no dependencies, and nothing is `eval`'d — attributes name **state keys**, never expressions — so it runs
-under a strict Content-Security-Policy. Made for pages the server already rendered (PHP, Rails, Django, htmx…).
+<h3 align="center">The smallest HTML-first reactive library.</h3>
+
+<p align="center">
+  <b>0.5 KB</b> core &nbsp;·&nbsp; <b>1.2 KB</b> with everything &nbsp;·&nbsp; zero JavaScript on the page &nbsp;·&nbsp; nothing <code>eval</code>'d
+</p>
+
+<p align="center">
+  <img alt="core 0.5 KB gzipped" src="https://img.shields.io/badge/core-0.5_KB_gzip-3fb950">
+  <img alt="lite 1.2 KB gzipped" src="https://img.shields.io/badge/lite-1.2_KB_gzip-3fb950">
+  <img alt="no dependencies" src="https://img.shields.io/badge/dependencies-0-3fb950">
+  <a href="https://github.com/hertonwork/minim/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/hertonwork/minim/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="MPL-2.0" src="https://img.shields.io/badge/license-MPL--2.0-blue">
+</p>
+
+## Size matters
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/size-dark.svg">
+  <img src="docs/size-light.svg" width="880" alt="Minim core: 516 B — usignal 882 B, VanJS 1,153 B, hyperactiv 1,220 B, nanostores 2,339 B. Minim lite: 1,260 B — petite-vue 7,080 B, Alpine.js 19,911 B.">
+</picture>
+
+<sub>Same ruler for everyone: latest npm source, terser, <code>gzip -9</code>. Brotli numbers and the method are in <a href="#the-numbers">the table below</a>.</sub>
+
+## Ten seconds
 
 ```html
 <script type="application/json" data-state="app">{ "name": "", "count": 0, "showName": true }</script>
@@ -14,30 +40,26 @@ under a strict Content-Security-Policy. Made for pages the server already render
 <script type="module" src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/index.js"></script>
 ```
 
-A *minim* is the smallest unit of liquid measure. It's also a palindrome. MPL-2.0. Formerly published as JsUpdatr.
+That is a complete page. The state lives in the JSON tag, the input and the text bind by key, the button needs no handler.
+Open the console and type `app.count = 100` — the page follows.
 
-## Size
+## Why
 
-Everything below measured the same way: latest npm source, terser, `gzip -9` / brotli 11.
+- **Your server already renders the HTML.** PHP, Rails, Django, htmx — the markup exists. Minim makes it reactive in place instead of asking you to rebuild it in JavaScript.
+- **Paste it in `<head>` and you're done.** The lite build is one `<script>` tag of 1.2 KB. No install, no import, no bundler, no build.
+- **Nothing is `eval`'d.** Attributes name state *keys*, never expressions, so it runs under a strict Content-Security-Policy. Alpine needs `unsafe-eval`; Minim doesn't.
+- **Buttons work without JavaScript.** `command="--inc"` / `--toggle` / `--set` / `--push` ride the HTML Invoker Commands API that every current browser ships.
+- **Late markup binds itself.** Fragments from `fetch`, htmx swaps or server partials are picked up automatically; removed elements release their bindings.
+- **Tiny because it's narrow.** Four attributes, four commands, dotted paths. No expression language, no loops, no templates — reach for Alpine or Vue when you need those.
 
-| | minified | gzip | brotli | what's inside |
-|---|---|---|---|---|
-| usignal | 1,900 | 882 | 797 | signals only |
-| **Minim core** (`reactive` + `effect`) | **868** | **516** | **471** | deep reactive state + effects |
-| VanJS core | 2,365 | 1,153 | 1,046 | state + `tags` DOM builder (UI is built in JS) |
-| hyperactiv | 2,328 | 1,220 | 1,104 | observable objects + computed |
-| **Minim lite** (everything, paste-in) | **2,385** | **1,260** | **1,131** | core + `data-*` bindings + buttons + late-DOM binding + JSON boot |
-| nanostores | 5,247 | 2,339 | 2,126 | stores |
-| Alpine.js 3.17 (`cdn.min.js`) | 55,935 | 19,911 | 18,029 | HTML directives with expressions, needs `unsafe-eval` |
+A *minim* is the smallest unit of liquid measure. It's also a palindrome. Formerly published as JsUpdatr.
 
-Minim is the only one of these where the page needs no JavaScript at all.
-
-## Three ways to use it
+## Three ways to load it
 
 ```html
-<!-- 1. Paste-in (lite/): one <script> in <head>, 1.2 KB gzipped. See lite/README.md for the snippet. -->
+<!-- 1. Paste-in (lite/): one <script> in <head>, 1.2 KB gzipped — the snippet is in lite/README.md -->
 
-<!-- 2. ES module (auto-boots) -->
+<!-- 2. ES module, auto-boots -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/index.js"></script>
 
 <!-- 3. Classic script: exposes window.minim and auto-boots -->
@@ -52,7 +74,9 @@ npm install minimjs
 import { reactive, effect, bind } from 'minimjs';
 ```
 
-## 1. State is JSON in the page
+## Reference
+
+### State is JSON in the page
 
 ```html
 <script type="application/json" data-state="app">
@@ -60,13 +84,12 @@ import { reactive, effect, bind } from 'minimjs';
 </script>
 ```
 
-Every such tag becomes a live, deep-reactive `window.app` (the name comes from `data-state`). Change it anywhere —
-`app.count++` in the console — and the page updates. Optional `data-root="some-id"` limits binding to that element
-instead of `<body>`.
+Every such tag becomes a live, deep-reactive `window.app` (the name comes from `data-state`). Optional
+`data-root="some-id"` limits binding to that element instead of `<body>`.
 
 From PHP: `<script type="application/json" data-state="app"><?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?></script>`
 
-## 2. Bind HTML with `data-` attributes
+### Attributes
 
 | Attribute | On | Does |
 |---|---|---|
@@ -77,14 +100,9 @@ From PHP: `<script type="application/json" data-state="app"><?= json_encode($sta
 
 Keys can be dotted paths: `data-model="user.city"`, `data-watch="todos.length"`.
 
-Markup inserted later (`fetch` + `insertAdjacentHTML`, htmx swaps, server fragments) is bound automatically;
-elements removed from the DOM release their bindings.
+### Buttons
 
-## 3. Buttons without JavaScript
-
-Uses the HTML Invoker Commands API (`command` / `commandfor`, supported by all current browsers; the module build adds
-a click fallback for older ones). `commandfor` must point at the bound root (`<body id="…">` or the `data-root`
-element), and use `type="button"`.
+`commandfor` points at the bound root (`<body id="…">` or the `data-root` element); use `type="button"`.
 
 ```html
 <body id="root">
@@ -102,7 +120,7 @@ element), and use `type="button"`.
 | `--set` | `data-key`, `value` | `state[key] = value` (numeric strings become Numbers) |
 | `--push` | `data-key` (an array), `value` | `state[key].push(value)` |
 
-## JavaScript API
+### JavaScript API
 
 ```js
 import { reactive, effect, bind, tick } from 'minimjs';
@@ -125,6 +143,23 @@ Types ship with the package (`dist/index.d.ts`).
 
 **Module build vs lite:** same attributes and commands. The module build also tracks `Object.keys(state)` inside
 effects, has a click fallback for browsers without `command` events, and exposes `AbortController` teardown.
+
+## The numbers
+
+Latest npm source of each library, terser, `gzip -9`, brotli 11 — the same pipeline for every row.
+
+| | minified | gzip | brotli | what's inside |
+|---|---|---|---|---|
+| **Minim core** (`reactive` + `effect`) | **868** | **516** | **471** | deep reactive state + effects |
+| usignal | 1,900 | 882 | 797 | signals only |
+| VanJS core | 2,365 | 1,153 | 1,046 | state + `tags` DOM builder (UI is built in JS) |
+| hyperactiv | 2,328 | 1,220 | 1,104 | observable objects + computed |
+| **Minim lite** (everything, paste-in) | **2,385** | **1,260** | **1,131** | core + `data-*` bindings + buttons + late-DOM binding + JSON boot |
+| nanostores | 5,247 | 2,339 | 2,126 | stores |
+| petite-vue 0.4 (`iife`) | 16,901 | 7,080 | 6,513 | HTML directives with expressions |
+| Alpine.js 3.17 (`cdn.min.js`) | 55,935 | 19,911 | 18,029 | HTML directives with expressions, needs `unsafe-eval` |
+
+Regenerate the chart after editing the numbers: `node docs/size-chart.mjs`. Current lite size: `npm run size`.
 
 ## Migrating from JsUpdatr v2
 
