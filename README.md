@@ -28,6 +28,10 @@
 
 <sub>Same ruler for everyone: latest npm source, terser, <code>gzip -9</code>. Brotli numbers and the method are in <a href="#the-numbers">the table below</a>.</sub>
 
+> **For the look:** [sscss](https://github.com/hertonwork/sscss) — super small css — is Minim's companion: 1–3 letter
+> utility classes, generated per page (≈1 KB), dark mode and the `an-*` motion utilities built for Minim. The
+> [demo page](https://hertonwork.github.io/minim/) uses both; together they are under 2 KB and make one request.
+
 ## Ten seconds
 
 ```html
@@ -184,9 +188,9 @@ Regenerate the chart after editing the numbers: `node docs/size-chart.mjs`. Curr
 ## Build a page with an agent
 
 `skills/minim-page/` is an agent skill (Claude Code, Cursor, Codex and friends) that builds one-file pages on Minim
-scoring 100/100/100/100 on PageSpeed with zero external JavaScript or CSS: a starter page with tokens and dark mode, both
-Minim builds to inline, an inliner, a preflight checker that maps to the Lighthouse audits, and the design rules that
-got the demo there.
+scoring 100/100/100/100 on PageSpeed with zero external JavaScript or CSS: a starter page styled with
+[sscss](https://github.com/hertonwork/sscss) (its generator and cheat sheet are included), both Minim builds to
+inline, an inliner, a preflight checker that maps to the Lighthouse audits, and the design rules that got the demo there.
 
 ```sh
 npx skills add hertonwork/minim        # installs skills/minim-page
