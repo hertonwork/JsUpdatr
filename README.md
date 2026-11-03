@@ -181,6 +181,18 @@ Regenerate the chart after editing the numbers: `node docs/size-chart.mjs`. Curr
   `data-watch-attributes="smallest:min"` became `data-bind="min:smallest"` (attribute first).
 - `JsUpdatr`, `JsUpdatr.observe` and `JsUpdatr.run` remain as aliases so old code keeps working after the one-line change above.
 
+## Build a page with an agent
+
+`skills/minim-page/` is an agent skill (Claude Code, Cursor, Codex and friends) that builds one-file pages on Minim
+scoring 100/100/100/100 on PageSpeed with zero external JavaScript or CSS: a starter page with tokens and dark mode, both
+Minim builds to inline, an inliner, a preflight checker that maps to the Lighthouse audits, and the design rules that
+got the demo there.
+
+```sh
+npx skills add hertonwork/minim        # installs skills/minim-page
+node skills/minim-page/scripts/check.mjs page.html --lighthouse
+```
+
 ## Development
 
 ```sh

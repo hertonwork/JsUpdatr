@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1f883d">
+  <title>PAGE TITLE — what it is in a few words</title>
+  <meta name="description" content="One or two sentences that say what this page is and what someone can do here.">
+  <link rel="canonical" href="https://example.com/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231f883d'/%3E%3C/svg%3E">
+
+  <!-- Everything this page needs is in this file. No requests for JS, CSS or fonts. -->
+  <style>
+    :root {
+      --ground: #ffffff; --surface: #f2f4f7; --surface-2: #dfe3e9; --ink: #0b0f14; --muted: #4b5563;
+      --accent: #1f883d; --accent-text: #15692f; --accent-ink: #ffffff; --field: #0b0f14; --field-ink: #ffffff;
+      --radius: 10px; --gutter: clamp(20px, 4vw, 32px); --measure: 62ch;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --ground: #0d1117; --surface: #161b22; --surface-2: #2a313b; --ink: #e6edf3; --muted: #9ca3af;
+              --accent: #3fb950; --accent-text: #3fb950; --accent-ink: #0d1117; --field: #1f883d; --field-ink: #ffffff; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--ground); color: var(--ink); font: 18px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-underline-offset: .15em; }
+    h1, h2, h3 { margin: 0; letter-spacing: -0.025em; line-height: 1.02; text-wrap: balance; }
+    h1 { font-size: clamp(2.6rem, 6.6vw, 5.4rem); letter-spacing: -0.035em; line-height: .95; }
+    h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); }
+    h3 { font-size: 1.25rem; letter-spacing: -0.01em; }
+    p { margin: 0; max-width: var(--measure); }
+    p + p { margin-top: 1em; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; background: var(--surface); padding: .1em .35em; border-radius: 5px; }
+    pre { margin: 0; background: var(--surface); border-radius: var(--radius); padding: 1.1rem 1.25rem; overflow: auto; font-size: .9rem; line-height: 1.55; }
+    pre code { background: none; padding: 0; font-size: inherit; }
+
+    .wrap { width: min(1120px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+    header.bar { display: flex; align-items: center; gap: 1.5rem; padding: 1.1rem 0; }
+    header.bar strong { font-size: 1.35rem; letter-spacing: -0.03em; margin-right: auto; }
+    header.bar nav { display: flex; gap: 1.1rem; align-items: center; }
+    header.bar nav a { text-decoration: none; font-weight: 500; white-space: nowrap; }
+    main > section { padding: clamp(56px, 9vw, 140px) 0; }
+    main > section.field { background: var(--field); color: var(--field-ink); }
+    main > section.tone { background: var(--surface); }
+    .cols { display: grid; gap: clamp(1.5rem, 4vw, 4rem); align-items: start; }
+    .cols > * { min-width: 0; }
+    @media (min-width: 820px) { .cols { grid-template-columns: 1fr 1fr; } .cols.wide-right { grid-template-columns: 5fr 7fr; } .cols.wide-left { grid-template-columns: 7fr 5fr; } }
+    .lede { font-size: clamp(1.15rem, 1.6vw, 1.35rem); margin-top: 1.5rem; }
+    .actions { margin-top: 2rem; }
+    .stack > * + * { margin-top: 1rem; }
+    .stack h2 + p { margin-top: 1.25rem; }
+
+    button, .button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 0; border-radius: 8px; padding: .65rem 1.15rem; margin: 0; cursor: pointer; text-decoration: none; display: inline-block; line-height: 1.3; transition: background .15s, transform .12s; }
+    p:has(> button), p:has(> .button), .actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+    button:hover, .button:hover { background: color-mix(in srgb, var(--surface-2), var(--ink) 10%); }
+    button:active, .button:active { transform: scale(.97); }
+    .primary, button.primary { background: var(--accent); color: var(--accent-ink); }
+    .primary:hover, button.primary:hover { background: color-mix(in srgb, var(--accent), var(--ink) 12%); }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    label { display: block; font-weight: 600; margin-bottom: .9rem; }
+    label small { display: block; font-weight: 400; color: var(--muted); font-size: .9rem; }
+    input:not([type="checkbox"]):not([type="color"]):not([type="range"]), select, textarea { display: block; width: 100%; margin-top: .3rem; font: inherit; color: var(--ink); background: var(--ground); border: 2px solid var(--surface-2); border-radius: 8px; padding: .55rem .75rem; transition: border-color .15s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: none; }
+    input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); vertical-align: -.15rem; margin-right: .4rem; }
+    input[type="range"] { width: 100%; accent-color: var(--accent); margin-top: .5rem; }
+
+    [data-ui] { background: var(--surface); border-radius: var(--radius); padding: 1.4rem; }
+    [data-ui] .title { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.01em; margin: 0 0 1rem; }
+    .big { font-size: clamp(4rem, 12vw, 9rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+
+    .list { list-style: none; margin: 1rem 0 0; padding: 0; }
+    .list li { display: flex; align-items: center; gap: .8rem; padding: .7rem .9rem; border-radius: 8px; background: var(--ground); margin-top: .5rem;
+               transition: opacity .35s, translate .35s; @starting-style { opacity: 0; translate: 0 -8px; } }
+    .list li span { flex: 1; }
+    .list li span.done { text-decoration: line-through; color: var(--muted); }
+    ::view-transition-group(*) { animation-duration: .3s; }
+    .meter { height: 1.4rem; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin: 1rem 0 1.5rem; }
+    .meter b { display: block; height: 100%; width: calc(var(--pct, 0) * 1%); background: var(--accent); border-radius: 999px; transition: width .45s cubic-bezier(.2, .8, .2, 1); }
+
+    dialog { border: 0; border-radius: var(--radius); background: var(--ground); color: var(--ink); padding: 1.6rem; width: min(26rem, 92vw); box-shadow: 0 24px 60px rgb(0 0 0 / .3); }
+    dialog::backdrop { background: rgb(0 0 0 / .5); }
+    footer { padding: 3rem 0 4rem; color: var(--muted); font-size: .95rem; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: view()) {
+        main > section > .wrap > * { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 22%; }
+        main > section > .wrap > :nth-child(2) { animation-range: entry 6% entry 28%; }
+      }
+    }
+    @keyframes rise { from { transform: translateY(24px); } }
+    @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+
+  <!-- 1. State: every value the page shows or edits, with its initial value. -->
+  <script type="application/json" data-state="app" data-root="root">
+    { "name": "", "count": 0, "agreed": false, "items": [] }
+  </script>
+</head>
+<body>
+
+<header class="bar wrap">
+  <strong>Brand</strong>
+  <nav aria-label="Site">
+    <a href="#how">How it works</a>
+    <a class="button primary" href="#start">Primary action</a>
+  </nav>
+</header>
+
+<main id="root">
+
+  <section>
+    <div class="wrap cols wide-left">
+      <div>
+        <h1>What this is, in two lines.</h1>
+        <p class="lede">One sentence that says plainly what the thing is and who it is for.</p>
+        <p class="actions"><a class="button primary" href="#start">Primary action</a> <a class="button" href="#how">Secondary</a></p>
+      </div>
+      <div data-ui>
+        <p class="title">A live panel</p>
+        <label>Your name <input data-model="name" placeholder="Type to see it update"></label>
+        <p>Hello, <b data-watch="name"></b>. You have clicked <b data-watch="count">0</b> times.</p>
+        <p><button type="button" commandfor="root" command="--inc" value="count">Click</button></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone" id="how">
+    <div class="wrap cols">
+      <div class="stack">
+        <h2>A section with its own composition.</h2>
+        <p>Say what this section proves. Keep running text in full ink; use muted only for notes.</p>
+      </div>
+      <div data-ui>
+        <p class="title">Another panel</p>
+        <label><input type="checkbox" data-model="agreed"> I agree</label>
+        <p data-show="agreed" hidden>Thanks — this line was hidden until you agreed.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap"><p>© Brand. A line about the page.</p></div>
+</footer>
+
+<!-- 2. Minim, inlined at the end of <body> so it binds before first paint. Run: node scripts/inline.mjs this-file.html -->
+<script><!--minim--></script>
+</body>
+</html>
