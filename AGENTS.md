@@ -12,7 +12,7 @@ Minim is a tiny reactive library for server-rendered HTML. Two builds, one page,
 | `lite/minim.min.js`, `lite/README.md`, `lite/example.html` | built from `lite/minim.js`, `lite/README.template.md`, `lite/example.template.html` | no — `npm run build` |
 | `docs/index.template.html` | the GitHub Pages demo, styled with [sscss](https://github.com/hertonwork/sscss) utilities; `index.html` is built from it with the page's generated sscss CSS, Minim and the size chart inlined | yes (never `index.html` directly) |
 | `docs/size-chart.mjs` | the size chart + wordmark SVGs; edit the numbers there and rerun | yes |
-| `skills/minim-page/` | the agent skill for building pages this way; its `assets/*.min.js` are copied from the builds | yes (SKILL.md, references, scripts, starter); assets via build |
+| `skills/minim-page/` | the agent skill for building pages this way; `assets/*.min.js`, `scripts/sscss.mjs` and `references/sscss.md` are copied from the builds and from the sscss package | yes (SKILL.md, design/minim references, check.mjs, inline.mjs, starter); copied files via `npm run build:skill` |
 | `test/` | `index.test.mjs` (node:test, core) and `dom.test.mjs` (Playwright, the demo page under a strict CSP) | yes |
 
 ## Commands
@@ -39,4 +39,5 @@ npm run size           # current lite size (min / gzip / brotli)
 ## Building a page with Minim
 
 Use the skill in `skills/minim-page/` (`npx skills add hertonwork/minim`, or read `skills/minim-page/SKILL.md`). It
-carries both builds, a starter page, an inliner and a preflight checker, and the rules that got the demo to 100.
+carries both builds, a starter page styled with sscss, the sscss generator and cheat sheet, an inliner and a preflight
+checker, and the rules that got the demo to 100.

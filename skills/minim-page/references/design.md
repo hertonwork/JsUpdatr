@@ -9,23 +9,29 @@ a tell *and* a contrast risk.
 
 ## Tokens (the whole palette)
 
+The tokens are sscss's. They are already in the generated block; override them in the page's own `<style>`:
+
 ```css
-:root {
-  --ground: #ffffff;   /* page */
-  --surface: #f2f4f7;  /* panels: a step in tone, never a border */
-  --surface-2: #dfe3e9;/* controls at rest */
-  --ink: #0b0f14;      /* running text, in full ink — grey body text reads unfinished */
-  --muted: #4b5563;    /* secondary notes only; ≥ 4.5:1 on ground */
-  --accent: #1f883d;   /* the action, and at most one other thing */
-  --accent-text: #15692f; /* accent as small text on a surface (the plain accent is ~4.1:1 there and fails) */
-  --accent-ink: #ffffff;  /* text on an accent button */
-  --field: #0b0f14; --field-ink: #ffffff; /* a section that changes its whole field colour */
-}
-@media (prefers-color-scheme: dark) { :root { --ground: #0d1117; --surface: #161b22; --surface-2: #2a313b; --ink: #e6edf3; --muted: #9ca3af; --accent: #3fb950; --accent-text: #3fb950; --accent-ink: #0d1117; --field: #1f883d; } }
+:root { --bg: #fff; --sf: #f2f4f7; --sf2: #dfe3e9; --ink: #0b0f14; --mut: #4b5563; --acc: #1a7a37; --acci: #fff; --r: 8px }
+@media (prefers-color-scheme: dark) { :root { --bg: #0d1117; --sf: #161b22; --sf2: #2a313b; --ink: #e6edf3; --mut: #9ca3af; --acc: #3fb950; --acci: #0d1117 } }
 ```
 
+| role | token | classes |
+|---|---|---|
+| page ground | `--bg` | `bg` |
+| panels: a step in tone, never a border | `--sf` | `bs` |
+| controls at rest | `--sf2` | `bs2` |
+| running text, in full ink — grey body text reads unfinished | `--ink` | `ci` |
+| secondary notes only; ≥ 4.5:1 on ground | `--mut` | `cm` |
+| the action, and at most one other thing | `--acc` | `ba` (background), `ca` (text) |
+| text on an accent button | `--acci` | `cw` |
+| the radius | `--r` | `r`, `r2`, `rp` (pill), `r0` |
+
+A section that changes its whole field colour (`.field` in the starter) is page-own CSS.
+
 Change the values to the brand; keep the roles. Check every text/background pair in both themes: 4.5:1 for text under
-24px (18.7px bold), 3:1 above. Lighthouse audits contrast on the whole page, including what is off-screen.
+24px (18.7px bold), 3:1 above. Lighthouse audits contrast on the whole page, including what is off-screen. The default
+accent is 4.9:1 as small text on `--sf` and 5.4:1 under white, so `ca` on a panel is safe without a second token.
 
 ## Type
 
@@ -40,17 +46,17 @@ Change the values to the brand; keep the roles. Check every text/background pair
 
 ## Space and frame
 
-- One frame: `width: min(1120px, 100% - 2 * var(--gutter))`, `--gutter: clamp(20px, 4vw, 32px)`, equal on both sides.
+- One frame: `.wrap { width: min(1120px, 100% - 2 * clamp(20px, 4vw, 32px)) }` with `mx` to center it, equal on both sides (or simply `w5 mx px6`).
 - Sections `clamp(56px, 9vw, 140px)` apart — clearly more than any gap inside a section.
 - Each section gets its own composition: text left / panel right, then panel left / text right, then a full-width
   field with one giant number, then a chart, then two short columns. Neighbours never share a layout; no row of cards.
 - A void is closed by something on its far side: when the text sits left, the right holds the live panel or figure.
-- Grids: `.cols { display: grid; gap: clamp(1.5rem, 4vw, 4rem) }` with `.cols > * { min-width: 0 }` — without that, a
-  `<pre>` or a long word pushes the column past the viewport on phones.
+- Grids: `gr g8 m-c2` (or `m-c3`, `l-c3`); `gr` gives children `min-width: 0` — without that, a `<pre>` or a long
+  word pushes the column past the viewport on phones. Unequal columns (`7fr 5fr`) are two lines of page-own CSS.
 
 ## Surfaces and ornament
 
-- Separate surfaces with a tone step (`--surface` on `--ground`), never with a 1px border or a shadow.
+- Separate surfaces with a tone step (`bs` on `bg`), never with a 1px border or a shadow.
 - No gradients, no glows, no glass/backdrop blur, no decorative blobs, no hairline dividers.
 - Shadows only on what floats: `<dialog>` and menus.
 - Corners: one radius token, 8–12px for panels and inputs, pill for buttons.
@@ -59,9 +65,9 @@ Change the values to the brand; keep the roles. Check every text/background pair
 
 ## Controls
 
-- Buttons: `font-weight: 600`, pill radius, `--surface-2` at rest, a 10% ink mix on hover, `scale(.97)` on press,
-  `:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px }`. The primary action is the only accent button on a screen.
-- Inputs: full width inside their `<label>`, `2px solid var(--surface-2)` border (form fields may have lines), accent on focus.
+- Buttons: `r bs2 ci px4 py2 an-fx` (the starter's `.btn:hover` adds a 10% ink mix); primary `r ba cw px4 py2 an-fx`;
+  `:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px }`. The primary action is the only accent button on a screen.
+- Inputs: full width inside their `<label>`, `2px solid var(--sf2)` border (form fields may have lines), accent on focus — page-own CSS in the starter.
 - Every control has a visible label or an `aria-label`, is keyboard-reachable in reading order, and is at least 24×24px
   with space around it.
 
@@ -69,12 +75,12 @@ Change the values to the brand; keep the roles. Check every text/background pair
 
 Build the page with motion off; it has to look finished still. Then:
 
-- Feedback on every control (hover/press/focus transitions, 120–150ms).
-- State changes animate through CSS: `transition` on properties `data-class` and `data-bind --var` touch; `@starting-style`
-  for inserted elements; view transitions for lists.
-- Entrance motion with `animation-timeline: view()` inside `@supports`, **transform only, never opacity** (faded
-  off-screen text fails the contrast audit); stagger siblings by ~6% of the range.
-- `@media (prefers-reduced-motion: reduce)` sets every duration to `.01ms`.
+- Feedback on every control: `an-fx` (hover/press transitions, 120–150ms).
+- State changes animate through CSS: `an-tone` for color, `an-grow` for a `--pct` meter, `data-class="an-spin:key"`
+  for a toggle; `an-in` for inserted elements (`@starting-style`); `an-vt` for `data-each` view transitions.
+- Entrance motion: `an-rise` (`animation-timeline: view()` inside `@supports`), **transform only, never opacity**
+  (faded off-screen text fails the contrast audit).
+- Every `an-*` is off under `prefers-reduced-motion`; the generator adds that rule once.
 
 ## Content
 

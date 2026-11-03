@@ -33,7 +33,7 @@
         "size": "node lite/build.mjs --size",
         "build:page": "node docs/build-page.mjs",
         "chart": "node docs/size-chart.mjs",
-        "build:skill": "node -e \"require('fs').copyFileSync('dist/minim.min.js','skills/minim-page/assets/minim.min.js');require('fs').copyFileSync('lite/minim.min.js','skills/minim-page/assets/minim-lite.min.js')\"",
+        "build:skill": "node -e \"const f=require('fs');f.copyFileSync('dist/minim.min.js','skills/minim-page/assets/minim.min.js');f.copyFileSync('lite/minim.min.js','skills/minim-page/assets/minim-lite.min.js');f.copyFileSync('node_modules/@labs_kai/sscss/skills/sscss/scripts/sscss.mjs','skills/minim-page/scripts/sscss.mjs');f.copyFileSync('node_modules/@labs_kai/sscss/skills/sscss/references/vocab.md','skills/minim-page/references/sscss.md')\"",
         "check:page": "node skills/minim-page/scripts/check.mjs index.html"
     },
     "repository": {
