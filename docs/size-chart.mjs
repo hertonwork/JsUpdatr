@@ -30,8 +30,8 @@ const panels = [
 
 const themes = {
   // 'inline' uses the page's CSS variables, so the SVG can be inlined once and follow light/dark automatically
-  inline: { bg: 'transparent', text: 'var(--ink)', muted: 'var(--muted)', bar: 'var(--surface-2)', accent: 'var(--accent)', accentText: 'var(--ground)', grid: 'var(--surface-2)' },
-  light: { bg: 'transparent', text: '#1f2328', muted: '#59636e', bar: '#d0d7de', accent: '#1f883d', accentText: '#ffffff', grid: '#d0d7de' },
+  inline: { bg: 'transparent', text: 'var(--ink)', muted: 'var(--mut)', bar: 'var(--sf2)', accent: 'var(--acc)', accentText: 'var(--bg)', grid: 'var(--sf2)' },
+  light: { bg: 'transparent', text: '#1f2328', muted: '#59636e', bar: '#d0d7de', accent: '#1a7a37', accentText: '#ffffff', grid: '#d0d7de' },
   dark:  { bg: 'transparent', text: '#e6edf3', muted: '#9198a1', bar: '#3d444d', accent: '#3fb950', accentText: '#0d1117', grid: '#3d444d' },
 };
 

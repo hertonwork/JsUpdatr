@@ -1,7 +1,7 @@
 {
     "name": "@labs_kai/minim",
     "version": "3.0.1",
-    "description": "Minim \u2014 the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
+    "description": "Minim — the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
     "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -61,6 +61,7 @@
         "node": ">=20"
     },
     "devDependencies": {
+        "@labs_kai/sscss": "github:hertonwork/sscss",
         "esbuild": "^0.28.2",
         "typescript": "^7.0.2"
     },

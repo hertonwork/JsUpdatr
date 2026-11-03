@@ -10,7 +10,7 @@ Minim is a tiny reactive library for server-rendered HTML. Two builds, one page,
 | `lite/minim.js` | the paste-in build, golfed by hand to stay ≈1.2 KB gzipped | yes, measure after (`npm run size`) |
 | `dist/` | built output of `src/` (`index.js`, `index.d.ts`, `minim.min.js`) | no — `npm run build` |
 | `lite/minim.min.js`, `lite/README.md`, `lite/example.html` | built from `lite/minim.js`, `lite/README.template.md`, `lite/example.template.html` | no — `npm run build` |
-| `docs/index.template.html` | the GitHub Pages demo; `index.html` is built from it with Minim and the size chart inlined | yes (never `index.html` directly) |
+| `docs/index.template.html` | the GitHub Pages demo, styled with [sscss](https://github.com/hertonwork/sscss) utilities; `index.html` is built from it with the page's generated sscss CSS, Minim and the size chart inlined | yes (never `index.html` directly) |
 | `docs/size-chart.mjs` | the size chart + wordmark SVGs; edit the numbers there and rerun | yes |
 | `skills/minim-page/` | the agent skill for building pages this way; its `assets/*.min.js` are copied from the builds | yes (SKILL.md, references, scripts, starter); assets via build |
 | `test/` | `index.test.mjs` (node:test, core) and `dom.test.mjs` (Playwright, the demo page under a strict CSP) | yes |
@@ -31,6 +31,7 @@ npm run size           # current lite size (min / gzip / brotli)
 - **Attributes name keys, never expressions.** Nothing is `eval`'d; that is why Minim runs under a strict CSP. Do not add an expression language.
 - **The lite build is a size claim.** Every byte added there must earn its place; measure with `npm run size` and keep the README's numbers true. New capabilities go in the module build first.
 - **The demo page is one file with one request.** It is built from the template with Minim inlined, scores Lighthouse 100/100/100/100, and must keep doing so. Pre-render initial values, no external scripts/styles/fonts, transform-only entrance motion.
+- **The demo page's CSS is sscss.** Layout, spacing, color and motion are sscss classes (`f ac g4`, `r2 bs p6`, `an-fx`, `an-in`, `an-grow`…); `docs/build-page.mjs` generates exactly the rules used into `<style data-sscss>` and fails on a class that is neither in the vocabulary nor styled by the page's own `<style>`. Page-own rules stay in that `<style>` and stay short. Cheat sheet: `npx sscss --list` (the package is a devDependency).
 - **Measure the same way for everyone.** Size numbers in the README come from the latest npm source of each library, terser, `gzip -9` / brotli 11. Update the chart (`node docs/size-chart.mjs`) when they change.
 - **Tests run on the built output** (`dist/`, `index.html`), so run `npm run build` before judging a change.
 - Commits are plain; PRs explain what changed and why in the body.
