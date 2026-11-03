@@ -60,5 +60,5 @@
   const boot = () => document.querySelectorAll('script[type="application/json"][data-state]').forEach(s =>
     bind(document.getElementById(s.dataset.root) || document.body, globalThis[s.dataset.state || 'state'] = reactive(JSON.parse(s.textContent))));
   globalThis.minim = { reactive, effect, bind };
-  document.readyState == 'loading' ? addEventListener('DOMContentLoaded', boot) : boot();
+  document.body ? boot() : addEventListener('DOMContentLoaded', boot);   // in <head>: wait; at the end of <body>: bind before first paint
 })();

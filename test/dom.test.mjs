@@ -12,7 +12,7 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { 'content-type': file.endsWith('.js') ? 'text/javascript' : 'text/html',
       // strict CSP: no inline scripts allowed except our hashed/none… we use 'self' only → demo-only inline
       // scripts would be blocked, so allow 'unsafe-inline' for the demo helpers but NO unsafe-eval.
-      'content-security-policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net" });
+      'content-security-policy': "default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'" });
     res.end(body);
   } catch { res.writeHead(404); res.end(); }
 }).listen(0);
@@ -61,7 +61,7 @@ check('--toggle shows the hidden block', await page.evaluate(() => app.showName 
 await page.click('button[command="--set"]');
 check('--set writes a value', (await text('[data-watch="text"]')) === 'tiramisu');
 await page.click('button[command="--push"]');
-check('--push on an array updates todos.length', (await text('[data-watch="todos.length"]')) === '2');
+check('--push on an array updates todos.length', (await text('[data-watch="todos.length"]')) === '3');
 
 // console-driven state change (the "fun" part)
 await page.evaluate(() => { app.favorites = '🍉'; });
@@ -78,6 +78,23 @@ await page.waitForTimeout(20);
 await page.fill('[data-model="name"]', 'H3');
 check('removed element no longer in DOM and no errors after update', (await page.locator('[data-todo]').count()) === 0);
 
+// data-each: the two seeded todos render, Enter adds one, the remove button splices
+await page.waitForTimeout(400);
+check('data-each renders the seeded items', (await page.locator('.todos li').count()) === 3);
+await page.fill('[data-command]', 'test the page'); await page.press('[data-command]', 'Enter'); await page.waitForTimeout(500);
+check('Enter on data-command input pushes and clears', (await page.locator('.todos li').count()) === 4 && (await page.inputValue('[data-command]')) === '');
+await page.click('.todos li:nth-child(1) button[command="--remove"]'); await page.waitForTimeout(500);
+check('--remove splices the item', (await page.locator('.todos li').count()) === 3 && (await text('[data-watch="todos.length"]')) === '3');
+check('data-class toggles a class from item state', await page.evaluate(() => { const li = document.querySelector('.todos li'); return li.querySelector('span').classList.contains('done') === li.querySelector('input').checked; }));
+await page.click('button[command="--toggle"][value="spin"]');
+check('data-class on the mark', await page.evaluate(() => document.querySelector('.mark').classList.contains('spin')));
+await page.evaluate(() => { const r = document.querySelector('[data-model="level"]'); r.value = 75; r.dispatchEvent(new Event('input')); }); await page.waitForTimeout(20);
+check('data-bind writes a CSS variable', await page.evaluate(() => document.querySelector('.meter').style.getPropertyValue('--pct') === '75'));
+await page.click('button[command="show-modal"]');
+check('native show-modal opens the dialog', await page.evaluate(() => document.getElementById('profile').open));
+await page.fill('dialog [data-model="name"]', 'Dialog');
+check('dialog fields write the same state', await page.evaluate(() => app.name === 'Dialog'));
+await page.click('dialog button[command="close"]');
 check('no page errors under strict CSP (no unsafe-eval)', errors.length === 0);
 if (errors.length) results.push('errors: ' + errors.join(' | '));
 

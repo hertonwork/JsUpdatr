@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-globalThis.document = { readyState: 'complete', querySelectorAll: () => [] };   // lite assumes a browser
+globalThis.document = { body: {}, querySelectorAll: () => [] };   // lite assumes a browser
 await import('./minim.js');
 const { reactive, effect } = globalThis.minim;
 const tick = () => Promise.resolve();

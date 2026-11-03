@@ -145,15 +145,63 @@ export function effect(fn, { signal } = {}) {
 /** Resolves after pending effects have flushed (handy in tests: `state.x = 1; await tick();`). */
 export const tick = () => Promise.resolve();
 /* ───────────────────────── DOM bindings ───────────────────────── */
-const SELECTOR = '[data-model],[data-watch],[data-show],[data-bind]';
-const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
-const setPath = (obj, path, v) => {
+const SELECTOR = '[data-model],[data-watch],[data-show],[data-bind],[data-class],[data-each],[data-command]';
+const bound = new WeakSet(); // elements already bound (by bind() or by data-each)
+const getPath = (obj, path, sc) => {
+    if (sc && path[0] === '$') {
+        if (path === '$i')
+            return sc.$i;
+        return path === '$' ? sc.$ : getPath(sc.$, path.slice(2));
+    }
+    return path.split('.').reduce((o, k) => o?.[k], obj);
+};
+const setPath = (obj, path, v, sc) => {
+    if (sc && path[0] === '$') {
+        if (path === '$') {
+            sc.list[sc.$i] = v;
+            return;
+        }
+        obj = sc.$;
+        path = path.slice(2);
+    }
     const ks = path.split('.');
     const last = ks.pop();
     (ks.reduce((o, k) => o[k], obj))[last] = v;
 };
 const coerce = (s) => s === 'true' ? true : s === 'false' ? false : s !== '' && !isNaN(Number(s)) ? Number(s) : s;
-function bindElement(el, state, signal) {
+const pairs = (spec) => spec.trim().split(/\s+/).map(p => p.split(':')).filter(([a, b]) => a && b);
+/** Run a `--command` with `source` as the button/input it came from (`value`, `data-key`, `data-step`). */
+function runCommand(state, command, source, sc) {
+    const src = source, d = src.dataset;
+    const key = d.key ?? src.value, cur = getPath(state, key, sc);
+    switch (command) {
+        case '--set':
+            setPath(state, d.key, coerce(src.value), sc);
+            break;
+        case '--toggle':
+            setPath(state, key, !cur, sc);
+            break;
+        case '--inc':
+            setPath(state, key, (cur || 0) + Number(d.step ?? 1), sc);
+            break;
+        case '--push':
+            if (src.value !== '') {
+                cur.push(coerce(src.value));
+                if (src instanceof HTMLInputElement)
+                    src.value = '';
+            }
+            break;
+        case '--remove':
+            cur.splice(Number(src.value), 1);
+            break;
+    }
+}
+let eachId = 0;
+function bindElement(el, state, signal, sc) {
+    if (bound.has(el))
+        return;
+    bound.add(el);
+    signal.addEventListener('abort', () => bound.delete(el), { once: true });
     const d = el.dataset;
     if (d.model != null) { // two-way, type-aware
         const input = el;
@@ -161,31 +209,71 @@ function bindElement(el, state, signal) {
         const isNum = input.type === 'number' || input.type === 'range';
         const read = () => (isCheck ? input.checked : isNum && input.value !== '' ? input.valueAsNumber : input.value);
         effect(() => {
-            const v = getPath(state, d.model) ?? '';
+            const v = getPath(state, d.model, sc) ?? '';
             if (isCheck)
                 input.checked = !!v;
             else if (input.value !== String(v))
                 input.value = String(v);
         }, { signal });
-        input.addEventListener('input', () => setPath(state, d.model, read()), { signal });
+        input.addEventListener('input', () => setPath(state, d.model, read(), sc), { signal });
     }
     if (d.watch != null)
-        effect(() => { el.textContent = String(getPath(state, d.watch) ?? ''); }, { signal });
+        effect(() => { el.textContent = String(getPath(state, d.watch, sc) ?? ''); }, { signal });
     if (d.show != null)
-        effect(() => { el.hidden = !getPath(state, d.show); }, { signal });
-    if (d.bind != null) { // data-bind="min:smallest max:largest disabled:locked"
-        for (const pair of d.bind.trim().split(/\s+/)) {
-            const [attr, key] = pair.split(':');
-            if (!attr || !key)
-                continue;
+        effect(() => { el.hidden = !getPath(state, d.show, sc); }, { signal });
+    if (d.bind != null) { // data-bind="min:smallest --hue:hue disabled:locked"
+        for (const [attr, key] of pairs(d.bind))
             effect(() => {
-                const v = getPath(state, key);
-                if (v == null || v === false)
-                    el.removeAttribute(attr);
+                const v = getPath(state, key, sc), off = v == null || v === false;
+                if (attr.startsWith('--'))
+                    off ? el.style.removeProperty(attr) : el.style.setProperty(attr, String(v)); // CSS variables
                 else
-                    el.setAttribute(attr, v === true ? '' : String(v));
+                    off ? el.removeAttribute(attr) : el.setAttribute(attr, v === true ? '' : String(v));
             }, { signal });
-        }
+    }
+    if (d.class != null) { // data-class="done:$.done shaking:alarm"
+        for (const [cls, key] of pairs(d.class))
+            effect(() => { el.classList.toggle(cls, !!getPath(state, key, sc)); }, { signal });
+    }
+    if (d.command != null) { // data-command="keydown.Enter:--push" on any element
+        const [evt, command] = d.command.split(':'), [type, k] = evt.split('.');
+        el.addEventListener(type, e => { if (!k || e.key === k)
+            runCommand(state, command, el, sc); }, { signal });
+    }
+    if (d.each != null && el instanceof HTMLTemplateElement) { // <template data-each="todos"> … $ $.field $i … </template>
+        const id = eachId++;
+        let nodes = [], items, first = true;
+        signal.addEventListener('abort', () => items?.abort(), { once: true });
+        effect(() => {
+            const list = getPath(state, d.each, sc);
+            const snapshot = Array.isArray(list) ? [...list] : []; // read now (tracked); render maybe later (view transition)
+            const render = () => {
+                items?.abort();
+                items = new AbortController();
+                nodes.forEach(n => n.remove());
+                nodes = [];
+                snapshot.forEach((item, i) => {
+                    const frag = el.content.cloneNode(true);
+                    const scope = { $: item, $i: i, list: list };
+                    frag.querySelectorAll('*').forEach(e => {
+                        for (const a of e.attributes)
+                            if (a.value === '$i')
+                                a.value = String(i);
+                            else if (a.value === '$')
+                                a.value = String(item);
+                    });
+                    frag.querySelectorAll(SELECTOR).forEach(e => bindElement(e, state, items.signal, scope));
+                    for (const n of frag.childNodes)
+                        if (n instanceof HTMLElement)
+                            n.style.viewTransitionName = `minim-${id}-${i}`;
+                    nodes.push(...frag.childNodes);
+                    el.before(frag);
+                });
+            };
+            const vt = document.startViewTransition;
+            first || !vt ? render() : vt.call(document, render); // animate adds/removes/reorders where supported
+            first = false;
+        }, { signal });
     }
 }
 /**
@@ -198,7 +286,7 @@ export function bind(root, state, { commands = true } = {}) {
     const { signal } = ctrl;
     const perElement = new WeakMap();
     const bindOne = (el) => {
-        if (perElement.has(el))
+        if (perElement.has(el) || bound.has(el))
             return;
         const c = new AbortController();
         signal.addEventListener('abort', () => c.abort(), { once: true });
@@ -230,36 +318,18 @@ export function bind(root, state, { commands = true } = {}) {
     mo.observe(root, { childList: true, subtree: true });
     signal.addEventListener('abort', () => mo.disconnect(), { once: true });
     if (commands) { // declarative actions: no JS on the page
-        const handle = (command, btn) => {
-            const key = btn.dataset.key ?? btn.value;
-            const cur = getPath(state, key);
-            switch (command) {
-                case '--set':
-                    setPath(state, btn.dataset.key, coerce(btn.value));
-                    break;
-                case '--toggle':
-                    setPath(state, key, !cur);
-                    break;
-                case '--inc':
-                    setPath(state, key, (cur || 0) + Number(btn.dataset.step ?? 1));
-                    break;
-                case '--push':
-                    cur.push(coerce(btn.value));
-                    break;
-            }
-        };
         if ('command' in HTMLButtonElement.prototype) { // Invoker Commands API (Baseline 2025)
             root.addEventListener('command', e => {
                 const ev = e;
                 if (ev.command.startsWith('--'))
-                    handle(ev.command, ev.source);
+                    runCommand(state, ev.command, ev.source);
             }, { signal });
         }
         else { // click fallback for older browsers
             root.addEventListener('click', e => {
                 const btn = e.target.closest('button[command^="--"]');
                 if (btn && btn.getAttribute('commandfor') === root.id)
-                    handle(btn.getAttribute('command'), btn);
+                    runCommand(state, btn.getAttribute('command'), btn);
             }, { signal });
         }
     }
@@ -277,7 +347,8 @@ export function boot(doc = document) {
     });
 }
 if (typeof document !== 'undefined') {
-    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', () => boot()) : boot();
+    // In <head>: wait for the DOM. At the end of <body> (or deferred/module): the DOM is parsed, so bind now — before first paint.
+    document.body ? boot() : document.addEventListener('DOMContentLoaded', () => boot());
 }
 /* ───────────────────────── namespace + JsUpdatr (v2) compatibility ───────────────────────── */
 export const minim = {
