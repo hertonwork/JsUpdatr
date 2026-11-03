@@ -66,7 +66,7 @@ transitions.
 ## JavaScript API (optional)
 
 ```js
-// module build: import { reactive, effect, bind, tick, boot } from 'minimjs'   |   classic/lite: window.minim
+// module build: import { reactive, effect, bind, tick, boot } from '@labs_kai/minim'   |   classic/lite: window.minim
 const state = minim.reactive({ n: 0 });          // deep Proxy; same object → same proxy
 const stop  = minim.effect(() => { /* reads are tracked; re-runs when they change */ });
 minim.effect(fn, { signal: abortController.signal });   // module: stop via AbortSignal
@@ -105,5 +105,5 @@ partials). Removed elements release their bindings.
 | global | `window.minim` | `window.minim` (IIFE) or ESM exports |
 | `Object.keys(state)` in effects | not tracked | tracked |
 
-Source and npm package: https://github.com/hertonwork/minim (`npm i minimjs`; CDN `https://cdn.jsdelivr.net/npm/minimjs@3/dist/minim.min.js`
+Source and npm package: https://github.com/hertonwork/minim (`npm i @labs_kai/minim`; CDN `https://cdn.jsdelivr.net/npm/@labs_kai/minim@3/dist/minim.min.js`
 for pages that may load a script — but a page built with this skill inlines the file instead).
