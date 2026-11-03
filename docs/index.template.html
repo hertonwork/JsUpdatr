@@ -32,7 +32,7 @@
     p { margin: 0; max-width: var(--measure); }
     p + p { margin-top: 1em; }
     code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; background: var(--surface); padding: .1em .35em; border-radius: 5px; }
-    pre { margin: 0; background: var(--surface); border-radius: var(--radius); padding: 1.1rem 1.25rem; overflow: auto; font-size: .9rem; line-height: 1.55; }
+    pre { margin: 0; background: var(--surface); border-radius: var(--radius); padding: 1.1rem 1.25rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; line-height: 1.55; }
     pre code { background: none; padding: 0; font-size: inherit; }
     kbd { font: inherit; font-weight: 700; }
 
@@ -43,6 +43,7 @@
     header.bar nav { display: flex; gap: 1.1rem; align-items: center; }
     header.bar nav a { text-decoration: none; font-weight: 500; white-space: nowrap; }
     header.bar .button { padding: .5rem .9rem; }
+    @media (max-width: 440px) { header.bar { gap: 1rem; } header.bar nav { gap: .8rem; } header.bar nav a:not(.button) { font-size: .95rem; } header.bar .button { padding: .45rem .75rem; } }
     main > section { padding: clamp(56px, 9vw, 140px) 0; }
     main > section.field { background: var(--field); color: var(--field-ink); }
     main > section.field code { background: rgb(255 255 255 / .14); }
@@ -78,6 +79,23 @@
     [data-ui] .title { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.01em; margin: 0 0 1rem; }
     .json { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .95rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
     .json span { color: var(--accent-text); font-weight: 600; }
+    /* the size card in the hero */
+    .size .kb { display: flex; align-items: baseline; gap: .9rem; flex-wrap: wrap; margin: 0 0 1.1rem; }
+    .size .kb b { font-size: clamp(3rem, 5.5vw, 4.4rem); letter-spacing: -0.04em; line-height: 1; color: var(--accent-text); }
+    .size .kb span { color: var(--muted); font-size: .95rem; }
+    .title.small { font-size: 1rem; margin: 1.25rem 0 .5rem; }
+    .bars { list-style: none; margin: 0; padding: 0; }
+    .bars li { display: grid; grid-template-columns: 5.6rem 1fr auto; gap: .6rem; align-items: center; font-size: .9rem; padding: .22rem 0; }
+    .bars li span { text-align: right; }
+    .bars li i { display: block; height: .8rem; border-radius: 4px; background: var(--surface-2); width: calc(var(--w) * 1%); transform-origin: left; animation: grow .9s cubic-bezier(.2, .8, .2, 1) both; }
+    .bars li:nth-child(2) i { animation-delay: .08s; } .bars li:nth-child(3) i { animation-delay: .16s; } .bars li:nth-child(4) i { animation-delay: .24s; }
+    .bars li b { font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bars li.me span, .bars li.me b { font-weight: 700; color: var(--accent-text); }
+    .bars li.me i { background: var(--accent); }
+    @keyframes grow { from { transform: scaleX(0); } }
+    /* compact field grid */
+    .fields { display: grid; gap: 0 1rem; align-items: end; }
+    @media (min-width: 640px) { .fields { grid-template-columns: repeat(3, 1fr); } }
     .big { font-size: clamp(4rem, 12vw, 9rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
     .greeting { font-size: 1.4rem; font-weight: 600; margin-top: 1rem; }
 
@@ -128,8 +146,7 @@
 
   <!-- 1. State is JSON in the page. From PHP: <?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?> -->
   <script type="application/json" data-state="app" data-root="root">
-    { "name": "", "showName": false, "text": "fruit salad", "favorites": "coconut, strawberry, pineapple",
-      "number": 22, "largest": 23, "smallest": 11, "count": 0,
+    { "name": "", "showName": false, "text": "fruit salad", "number": 22, "largest": 23, "smallest": 11, "count": 0,
       "user": { "city": "Punta Gorda" }, "todos": [{ "text": "ship v3", "done": true }, { "text": "write docs", "done": false }],
       "level": 40, "accent": "#1f883d", "spin": false }
   </script>
@@ -151,16 +168,74 @@
     <div class="wrap cols wide-left">
       <div>
         <h1>Reactive HTML in&nbsp;1.2&nbsp;KB.</h1>
-        <p class="lede">Minim binds the HTML your server already rendered to a JSON state tag. No build step, no dependencies, nothing <code>eval</code>'d, and not one line of JavaScript on the page. The <code>app.json</code> panel is the state of this page, live.</p>
-        <p class="actions"><a class="button primary" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Paste the 1.2 KB snippet</a> <a class="button" href="#bind">See how it binds</a></p>
+        <p class="lede">Minim binds the HTML your server already rendered to a JSON state tag. No build step, no dependencies, nothing <code>eval</code>'d, not one line of JavaScript on the page — and it is the smallest library that does this.</p>
+        <p class="actions"><a class="button primary" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Paste the 1.2 KB snippet</a> <a class="button" href="#bind">See it work</a></p>
       </div>
-      <div data-ui aria-label="The page's state, live">
-        <p class="title">app.json</p>
-        <div class="json">{
+      <div class="size" data-ui aria-label="Size comparison, minified and gzipped">
+        <p class="title">Minified + gzipped</p>
+        <p class="kb"><b>1.2 KB</b><span>Minim lite — every binding on this page</span></p>
+        <ol class="bars" aria-label="HTML-first libraries">
+          <li class="me"><span>Minim lite</span><i aria-hidden="true" style="--w: 6.3"></i><b>1,260 B</b></li>
+          <li><span>petite-vue</span><i aria-hidden="true" style="--w: 35.6"></i><b>7,080 B · 5.6×</b></li>
+          <li><span>Alpine.js</span><i aria-hidden="true" style="--w: 100"></i><b>19,911 B · 16×</b></li>
+        </ol>
+        <p class="title small">Reactive core only</p>
+        <ol class="bars" aria-label="Reactive cores">
+          <li class="me"><span>Minim</span><i aria-hidden="true" style="--w: 42.3"></i><b>516 B</b></li>
+          <li><span>usignal</span><i aria-hidden="true" style="--w: 72.3"></i><b>882 B · 1.7×</b></li>
+          <li><span>VanJS</span><i aria-hidden="true" style="--w: 94.5"></i><b>1,153 B · 2.2×</b></li>
+          <li><span>hyperactiv</span><i aria-hidden="true" style="--w: 100"></i><b>1,220 B · 2.4×</b></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone">
+    <div class="wrap">
+      <div class="stack">
+        <h2>Size matters.</h2>
+        <p>Measured the same way for everyone: the latest npm source, terser, <code>gzip -9</code>. Minim's reactive core is the smallest on the chart, and the paste-in build with every binding on this page is a fifth the size of petite-vue and a sixteenth of Alpine.</p>
+      </div>
+      <figure class="chart" style="margin-top: 2.5rem">
+        __CHART__
+        <figcaption>Bytes, minified and gzipped. The full table with brotli numbers is in the <a href="https://github.com/hertonwork/minim#the-numbers">README</a>.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="bind">
+    <div class="wrap">
+      <div class="stack">
+        <h2>It binds by key, not by expression.</h2>
+        <p>An input with <code>data-model</code> writes to the state; anything with <code>data-watch</code> reads from it; <code>data-bind</code> mirrors values into attributes; a <code>&lt;button command="--inc"&gt;</code> changes it with no handler at all. Keys can be dotted paths. There is no expression language and nothing is evaluated, which is why Minim runs under a strict Content-Security-Policy. The panel on the right is the state of this page, live.</p>
+      </div>
+      <div class="cols" style="margin-top: 2rem">
+        <div data-ui>
+          <p class="title">Change the state</p>
+          <div class="fields">
+            <label>Name <input data-model="name" placeholder="Type your name"></label>
+            <label>Text <input data-model="text"></label>
+            <label>City <small>user.city</small> <input data-model="user.city"></label>
+            <label>Number <small>min … max</small> <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
+            <label>Min <input type="number" data-model="smallest" data-bind="max:largest"></label>
+            <label>Max <input type="number" data-model="largest" data-bind="min:smallest"></label>
+          </div>
+          <label><input type="checkbox" data-model="showName"> Show the greeting</label>
+          <p class="title small">Or press a button — no handlers, no <code>onclick</code>, just <code>command</code></p>
+          <p>
+            <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
+            <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
+            <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
+            <button type="button" commandfor="root" command="--push" data-key="todos" data-as="text" value="call mom">add a todo</button>
+          </p>
+        </div>
+        <div data-ui>
+          <p class="title">What the page sees</p>
+          <p class="greeting" data-show="showName" hidden>Hello, <span data-watch="name"></span>. The text says “<span data-watch="text">fruit salad</span>”.</p>
+          <div class="json">{
   "name": "<span data-watch="name"></span>",
   "showName": <span data-watch="showName">false</span>,
   "text": "<span data-watch="text">fruit salad</span>",
-  "favorites": "<span data-watch="favorites">coconut, strawberry, pineapple</span>",
   "number": <span data-watch="number">22</span>,
   "smallest": <span data-watch="smallest">11</span>,
   "largest": <span data-watch="largest">23</span>,
@@ -171,33 +246,13 @@
   "accent": "<span data-watch="accent">#1f883d</span>",
   "spin": <span data-watch="spin">false</span>
 }</div>
+        </div>
       </div>
-    </div>
-  </section>
+      <pre style="margin-top: 2rem"><code>&lt;script type="application/json" data-state="app"&gt;{ "name": "", "count": 0, "showName": false }&lt;/script&gt;
 
-  <section class="tone" id="bind">
-    <div class="wrap cols">
-      <div class="stack">
-        <h2>It binds by key, not by expression.</h2>
-        <p>An input with <code>data-model</code> writes to the state; anything with <code>data-watch</code> reads from it; <code>data-bind</code> mirrors values into attributes. Keys can be dotted paths. There is no expression language to learn and nothing is evaluated, which is why Minim runs under a strict Content-Security-Policy.</p>
-        <p>Try it: the number field's <code>min</code> and <code>max</code> follow the two fields under it, and the greeting shows up when you tick the box.</p>
-        <pre><code>&lt;label&gt;Name &lt;input data-model="name"&gt;&lt;/label&gt;
-&lt;input type="number" data-model="number"
-       data-bind="min:smallest max:largest"&gt;
-&lt;p data-show="showName"&gt;Hello, &lt;b data-watch="name"&gt;&lt;/b&gt;&lt;/p&gt;</code></pre>
-      </div>
-      <div data-ui>
-        <p class="title">Try it</p>
-        <label>Name <input data-model="name" placeholder="Type your name"></label>
-        <label>Favorites <input data-model="favorites"></label>
-        <label>Text <input data-model="text"></label>
-        <label>Number <small>bounded by the min and max below</small> <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
-        <label>Min <input type="number" data-model="smallest" data-bind="max:largest"></label>
-        <label>Max <input type="number" data-model="largest" data-bind="min:smallest"></label>
-        <label>City <small>a nested path: user.city</small> <input data-model="user.city"></label>
-        <label><input type="checkbox" data-model="showName"> Show the greeting</label>
-        <p class="greeting" data-show="showName" hidden>Hello, <span data-watch="name"></span>. I like <span data-watch="text">fruit salad</span> and <span data-watch="favorites">coconut, strawberry, pineapple</span>.</p>
-      </div>
+&lt;input data-model="name"&gt;
+&lt;p data-show="showName" hidden&gt;Hello, &lt;b data-watch="name"&gt;&lt;/b&gt;&lt;/p&gt;
+&lt;button type="button" commandfor="root" command="--inc" value="count"&gt;count +1&lt;/button&gt;</code></pre>
     </div>
   </section>
 
@@ -205,13 +260,10 @@
     <div class="wrap cols wide-right">
       <div class="stack">
         <h2>Buttons without JavaScript.</h2>
-        <p>These are plain <code>&lt;button command="--inc" commandfor="root"&gt;</code> elements. The browser's Invoker Commands API delivers the click as a <code>command</code> event and Minim applies it to the state. No handlers, no <code>onclick</code>, nothing to wire.</p>
+        <p>Plain <code>&lt;button command="--inc" commandfor="root"&gt;</code> elements. The browser's Invoker Commands API delivers the click as a <code>command</code> event and Minim applies it to the state — the same key the panel above shows. Nothing to wire.</p>
         <p>
           <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
           <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
-          <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
-          <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
-          <button type="button" commandfor="root" command="--push" data-key="todos" data-as="text" value="call mom">add a todo</button>
         </p>
       </div>
       <div>
@@ -295,18 +347,6 @@
     </div>
   </section>
 
-  <section class="tone">
-    <div class="wrap">
-      <div class="stack">
-        <h2>Size matters.</h2>
-        <p>Measured the same way for everyone: the latest npm source, terser, <code>gzip -9</code>. Minim's reactive core is the smallest on the chart, and the paste-in build with every binding on this page is a fifth the size of petite-vue and a sixteenth of Alpine.</p>
-      </div>
-      <figure class="chart" style="margin-top: 2.5rem">
-        __CHART__
-        <figcaption>Bytes, minified and gzipped. The full table with brotli numbers is in the <a href="https://github.com/hertonwork/minim#the-numbers">README</a>.</figcaption>
-      </figure>
-    </div>
-  </section>
 
   <section>
     <div class="wrap cols wide-left">
