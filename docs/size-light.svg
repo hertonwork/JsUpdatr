@@ -3,8 +3,8 @@
 <text x="24" y="38" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2328">Reactive core</text>
 <text x="856" y="38" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#59636e" text-anchor="end">state + effects, min+gzip</text>
 <text x="188" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#1f2328" text-anchor="end">Minim core</text>
-<rect x="200" y="60" width="120" height="18" rx="4" fill="#1f883d"/>
-<text x="328" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1f883d">516 B</text>
+<rect x="200" y="60" width="120" height="18" rx="4" fill="#1a7a37"/>
+<text x="328" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a7a37">516 B</text>
 <text x="188" y="103" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2328" text-anchor="end">usignal</text>
 <rect x="200" y="90" width="206" height="18" rx="4" fill="#d0d7de"/>
 <text x="414" y="103" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#59636e">882 B  ·  1.7× Minim</text>
@@ -20,8 +20,8 @@
 <text x="24" y="244" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2328">HTML-first, no JavaScript on the page</text>
 <text x="856" y="244" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#59636e" text-anchor="end">bind data-* attributes, min+gzip</text>
 <text x="188" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#1f2328" text-anchor="end">Minim lite (everything)</text>
-<rect x="200" y="266" width="35" height="18" rx="4" fill="#1f883d"/>
-<text x="243" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1f883d">1,260 B</text>
+<rect x="200" y="266" width="35" height="18" rx="4" fill="#1a7a37"/>
+<text x="243" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1a7a37">1,260 B</text>
 <text x="188" y="309" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2328" text-anchor="end">petite-vue</text>
 <rect x="200" y="296" width="194" height="18" rx="4" fill="#d0d7de"/>
 <text x="402" y="309" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#59636e">7,080 B  ·  5.6× Minim</text>

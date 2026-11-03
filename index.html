@@ -4,244 +4,172 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#1f883d">
+  <meta name="theme-color" content="#1a7a37">
   <title>Minim — reactive HTML in 1.2 KB</title>
   <meta name="description" content="Minim binds the HTML your server already rendered to a JSON state tag. 1.2 KB, no build step, no dependencies, nothing eval'd, zero JavaScript on the page. This page is the demo.">
   <link rel="canonical" href="https://hertonwork.github.io/minim/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231f883d'/%3E%3Ctext x='32' y='45' font-family='system-ui,sans-serif' font-weight='700' font-size='38' text-anchor='middle' fill='%23fff'%3Em%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a7a37'/%3E%3Ctext x='32' y='45' font-family='system-ui,sans-serif' font-weight='700' font-size='38' text-anchor='middle' fill='%23fff'%3Em%3C/text%3E%3C/svg%3E">
 
-  <!-- Everything this page needs is in this file: the styles below, Minim at the end of <body>. No requests for JS or CSS. -->
+  <!-- Everything this page needs is in this file. The layout, color and motion classes are sscss (hertonwork/sscss):
+       the build generates exactly the rules this page uses into <style data-sscss> below. The <style> here is only
+       what the vocabulary doesn't cover. Minim is inlined at the end of <body>. No requests for JS or CSS. -->
   <style>
-    :root {
-      --ground: #ffffff; --surface: #f2f4f7; --surface-2: #dfe3e9; --ink: #0b0f14; --muted: #4b5563;
-      --accent: #1f883d; --accent-text: #15692f; --accent-ink: #ffffff; --field: #0b0f14; --field-ink: #ffffff;
-      --radius: 10px; --gutter: clamp(20px, 4vw, 32px); --measure: 62ch;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root { --ground: #0d1117; --surface: #161b22; --surface-2: #2a313b; --ink: #e6edf3; --muted: #9ca3af;
-              --accent: #3fb950; --accent-text: #3fb950; --accent-ink: #0d1117; --field: #1f883d; --field-ink: #ffffff; }
-    }
-    * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--ground); color: var(--ink); font: 18px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { font-size: 18px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
     a { color: inherit; text-underline-offset: .15em; }
-    h1, h2, h3 { margin: 0; letter-spacing: -0.025em; line-height: 1.02; text-wrap: balance; }
+    h1, h2 { margin: 0; letter-spacing: -0.025em; line-height: 1.02; text-wrap: balance; }
     h1 { font-size: clamp(2.6rem, 6.6vw, 5.4rem); letter-spacing: -0.035em; line-height: .95; }
     h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); }
-    h3 { font-size: 1.25rem; letter-spacing: -0.01em; }
-    p { margin: 0; max-width: var(--measure); }
+    p { margin: 0; max-width: 62ch; }
     p + p { margin-top: 1em; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; background: var(--surface); padding: .1em .35em; border-radius: 5px; }
-    pre { margin: 0; background: var(--surface); border-radius: var(--radius); padding: 1.1rem 1.25rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; line-height: 1.55; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; background: var(--sf); padding: .1em .35em; border-radius: 5px; }
+    pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; line-height: 1.55; }
     pre code { background: none; padding: 0; font-size: inherit; }
     kbd { font: inherit; font-weight: 700; }
-
-    /* frame */
-    .wrap { width: min(1120px, 100% - 2 * var(--gutter)); margin-inline: auto; }
-    header.bar { display: flex; align-items: center; gap: 1.5rem; padding: 1.1rem 0; }
-    header.bar strong { font-size: 1.35rem; letter-spacing: -0.03em; margin-right: auto; }
-    header.bar nav { display: flex; gap: 1.1rem; align-items: center; }
-    header.bar nav a { text-decoration: none; font-weight: 500; white-space: nowrap; }
-    header.bar .button { padding: .5rem .9rem; }
-    @media (max-width: 440px) { header.bar { gap: 1rem; } header.bar nav { gap: .8rem; } header.bar nav a:not(.button) { font-size: .95rem; } header.bar .button { padding: .45rem .75rem; } }
-    main > section { padding: clamp(56px, 9vw, 140px) 0; }
-    main > section.field { background: var(--field); color: var(--field-ink); }
-    main > section.field code { background: rgb(255 255 255 / .14); }
-    main > section.tone { background: var(--surface); }
-    .cols { display: grid; gap: clamp(1.5rem, 4vw, 4rem); align-items: start; }
-    .cols > * { min-width: 0; }
-    @media (min-width: 820px) { .cols { grid-template-columns: 1fr 1fr; } .cols.wide-right { grid-template-columns: 5fr 7fr; } .cols.wide-left { grid-template-columns: 7fr 5fr; } }
-    .lede { font-size: clamp(1.15rem, 1.6vw, 1.35rem); margin-top: 1.5rem; }
-    .actions { margin-top: 2rem; }
-    .stack > * + * { margin-top: 1rem; }
-    .stack h2 + p, .stack h2 + .lede { margin-top: 1.25rem; }
-
-    /* controls: one accent, feedback on press/hover/focus */
-    button, .button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 0; border-radius: 8px; padding: .65rem 1.15rem; margin: 0; cursor: pointer; text-decoration: none; display: inline-block; line-height: 1.3; transition: background .15s, transform .12s; }
-    p:has(> button), p:has(> .button), .actions { display: flex; flex-wrap: wrap; gap: .6rem; }
-    button:hover, .button:hover { background: color-mix(in srgb, var(--surface-2), var(--ink) 10%); }
-    button:active, .button:active { transform: scale(.97); }
-    .primary, button.primary { background: var(--accent); color: var(--accent-ink); }
-    .primary:hover, button.primary:hover { background: color-mix(in srgb, var(--accent), var(--ink) 12%); }
+    section { padding-block: clamp(56px, 9vw, 140px); }
+    .wrap { width: min(1120px, 100% - 2 * clamp(20px, 4vw, 32px)); }
+    @media (min-width: 768px) { .gr.wl { grid-template-columns: 7fr 5fr; } .gr.wr { grid-template-columns: 5fr 7fr; } }
+    /* a section that changes its whole field colour */
+    .field { background: #0b0f14; color: #fff; }
+    .field code { background: rgb(255 255 255 / .14); }
     .field button { background: rgb(255 255 255 / .16); color: inherit; }
     .field button:hover { background: rgb(255 255 255 / .26); }
-    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    @media (prefers-color-scheme: dark) { .field { background: #1a7a37; } }
+
+    /* controls */
+    button { font: inherit; font-weight: 600; cursor: pointer; line-height: 1.3; }
+    .btn:hover { background: color-mix(in srgb, var(--sf2), var(--ink) 10%); }
+    .ba:hover:is(button, a) { background: color-mix(in srgb, var(--acc), var(--ink) 12%); }
+    :focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
     label { display: block; font-weight: 600; margin-bottom: .9rem; }
-    label small { display: block; font-weight: 400; color: var(--muted); font-size: .9rem; }
-    input:not([type="checkbox"]):not([type="color"]):not([type="range"]) { display: block; width: 100%; margin-top: .3rem; font: inherit; color: var(--ink); background: var(--ground); border: 2px solid var(--surface-2); border-radius: 8px; padding: .55rem .75rem; transition: border-color .15s; }
-    input:not([type="checkbox"]):focus { border-color: var(--accent); outline: none; }
-    input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); vertical-align: -.15rem; margin-right: .4rem; }
-    input[type="range"] { width: 100%; accent-color: var(--accent); margin-top: .5rem; }
+    label small { display: block; font-weight: 400; color: var(--mut); font-size: .9rem; }
+    input:not([type="checkbox"]):not([type="color"]):not([type="range"]) { display: block; width: 100%; margin-top: .3rem; font: inherit; color: var(--ink); background: var(--bg); border: 2px solid var(--sf2); border-radius: var(--r); padding: .55rem .75rem; transition: border-color .15s; }
+    input:not([type="checkbox"]):focus { border-color: var(--acc); outline: none; }
+    input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: var(--acc); vertical-align: -.15rem; margin-right: .4rem; }
+    input[type="range"] { width: 100%; accent-color: var(--acc); margin-top: .5rem; }
     input[type="color"] { width: 3.2rem; height: 2.2rem; border: 0; padding: 0; background: none; vertical-align: middle; margin-left: .5rem; cursor: pointer; }
 
-    /* interface fragments: the product's own panels */
-    [data-ui] { background: var(--surface); border-radius: var(--radius); padding: 1.4rem; }
-    [data-ui] .title { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.01em; margin: 0 0 1rem; }
+    /* interface fragments */
     .json { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .95rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
-    .json span { color: var(--accent-text); font-weight: 600; }
-    /* the size card in the hero */
-    .size .kb { display: flex; align-items: baseline; gap: .9rem; flex-wrap: wrap; margin: 0 0 1.1rem; }
-    .size .kb b { font-size: clamp(3rem, 5.5vw, 4.4rem); letter-spacing: -0.04em; line-height: 1; color: var(--accent-text); }
-    .size .kb span { color: var(--muted); font-size: .95rem; }
-    .title.small { font-size: 1rem; margin: 1.25rem 0 .5rem; }
-    .bars { list-style: none; margin: 0; padding: 0; }
-    .bars li { display: grid; grid-template-columns: 5.6rem 1fr auto; gap: .6rem; align-items: center; font-size: .9rem; padding: .22rem 0; }
-    .bars li span { text-align: right; }
-    .bars li i { display: block; height: .8rem; border-radius: 4px; background: var(--surface-2); width: calc(var(--w) * 1%); transform-origin: left; animation: grow .9s cubic-bezier(.2, .8, .2, 1) both; }
-    .bars li:nth-child(2) i { animation-delay: .08s; } .bars li:nth-child(3) i { animation-delay: .16s; } .bars li:nth-child(4) i { animation-delay: .24s; }
-    .bars li b { font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .bars li.me span, .bars li.me b { font-weight: 700; color: var(--accent-text); }
-    .bars li.me i { background: var(--accent); }
+    .json span { color: var(--acc); font-weight: 600; }
+    .kb { font-size: clamp(3rem, 5.5vw, 4.4rem); letter-spacing: -0.04em; line-height: 1; }
+    .bars li { display: grid; grid-template-columns: 5.6rem 1fr auto; gap: .6rem; align-items: center; padding: .22rem 0; }
+    .bar { height: .8rem; border-radius: 4px; width: calc(var(--w) * 1%); transform-origin: left; animation: grow .9s cubic-bezier(.2, .8, .2, 1) both; }
+    .bars li:nth-child(2) .bar { animation-delay: .08s; } .bars li:nth-child(3) .bar { animation-delay: .16s; } .bars li:nth-child(4) .bar { animation-delay: .24s; }
     @keyframes grow { from { transform: scaleX(0); } }
-    /* compact field grid */
     .fields { display: grid; gap: 0 1rem; align-items: end; }
     @media (min-width: 640px) { .fields { grid-template-columns: repeat(3, 1fr); } }
-    .big { font-size: clamp(4rem, 12vw, 9rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
-    .greeting { font-size: 1.4rem; font-weight: 600; margin-top: 1rem; }
-
-    /* the todo list */
-    .todos { list-style: none; margin: 1rem 0 0; padding: 0; }
-    .todos li { display: flex; align-items: center; gap: .8rem; padding: .7rem .9rem; border-radius: 8px; background: var(--ground); margin-top: .5rem;
-                transition: opacity .35s, translate .35s; @starting-style { opacity: 0; translate: 0 -8px; } }
-    .todos li span { flex: 1; transition: color .25s; }
-    .todos li span.done { text-decoration: line-through; color: var(--muted); }
-    .todos li button { padding: .25rem .7rem; border-radius: 6px; }
-    ::view-transition-group(*) { animation-duration: .3s; }
-
-    /* state → css */
-    .meter { height: 1.4rem; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin: 1rem 0 1.5rem; }
-    .meter b { display: block; height: 100%; width: calc(var(--pct, 0) * 1%); background: var(--accent); border-radius: 999px; transition: width .45s cubic-bezier(.2, .8, .2, 1), background .3s; }
-    .theme { transition: color .3s; }
-    .theme [data-ui], .theme .meter { transition: background .3s; }
-    .mark { display: inline-block; font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: var(--accent); transition: color .3s; }
-    .mark.spin { animation: spin 1.4s cubic-bezier(.65, 0, .35, 1) infinite; }
-    @keyframes spin { to { transform: rotateY(1turn); } }
-
-    /* late dom */
-    [data-todo] { background: var(--ground); border-radius: 8px; padding: .8rem 1rem; margin-top: .6rem; transition: opacity .45s, translate .45s; @starting-style { opacity: 0; translate: -12px 0; } }
-
-    dialog { border: 0; border-radius: var(--radius); background: var(--ground); color: var(--ink); padding: 1.6rem; width: min(26rem, 92vw); box-shadow: 0 24px 60px rgb(0 0 0 / .3); }
+    .big { font-size: clamp(4rem, 12vw, 9rem); letter-spacing: -0.04em; line-height: 1; }
+    .todos { margin-top: 1rem; }
+    .done { text-decoration: line-through; color: var(--mut); }
+    .meter { height: 1.4rem; }
+    .mark { font-size: clamp(3rem, 8vw, 5.5rem); letter-spacing: -0.04em; line-height: 1; }
+    dialog { border: 0; border-radius: calc(var(--r) * 1.5); background: var(--bg); color: var(--ink); padding: 1.6rem; width: min(26rem, 92vw); }
     dialog::backdrop { background: rgb(0 0 0 / .5); }
-    dialog h3 { margin-bottom: 1rem; }
-
-    /* size */
     .chart svg { width: 100%; height: auto; display: block; }
     figure { margin: 0; }
-    figcaption { color: var(--muted); font-size: .95rem; margin-top: .75rem; }
-
-    footer { padding: 3rem 0 4rem; color: var(--muted); font-size: .95rem; }
     footer p { max-width: none; }
-
-    /* entrance motion: scroll-driven, CSS only, off when the user prefers reduced motion */
-    @media (prefers-reduced-motion: no-preference) {
-      @supports (animation-timeline: view()) {
-        main > section > .wrap > * { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 22%; }
-        main > section > .wrap > :nth-child(2) { animation-range: entry 6% entry 28%; }
-        main > section > .wrap > :nth-child(3) { animation-range: entry 12% entry 34%; }
-      }
-    }
-    @keyframes rise { from { transform: translateY(24px); } }
-    @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
   </style>
+  <style data-sscss>*,::before,::after{box-sizing:border-box;border:0 solid}body{margin:0;font:16px/1.5 ui-sans-serif,system-ui,sans-serif;background:var(--bg);color:var(--ink)}img,svg{max-width:100%;height:auto}:root{--ink:#0b0f14;--mut:#4b5563;--bg:#fff;--sf:#f2f4f7;--sf2:#dfe3e9;--acc:#1a7a37;--acci:#fff;--r:8px}@media(prefers-color-scheme:dark){:root{--ink:#e6edf3;--mut:#9ca3af;--bg:#0d1117;--sf:#161b22;--sf2:#2a313b;--acc:#3fb950;--acci:#0d1117}}.ac{align-items:center}.ae{align-items:end}.an-fx{transition:background .15s,transform .12s,color .15s}.an-fx:active{transform:scale(.97)}.an-grow{width:calc(var(--pct,0)*1%);transition:width .45s cubic-bezier(.2,.8,.2,1)}.an-in{transition:opacity .35s,translate .35s;@starting-style{opacity:0;translate:0 -8px}}@supports(animation-timeline:view()){.an-rise{animation:ss-rise linear both;animation-timeline:view();animation-range:entry 0% entry 22%}}.an-tone{transition:color .3s,background .3s,border-color .3s}.an-vt{}.b{font-weight:700}.ba{background:var(--acc)}.bg{background:var(--bg)}.bk{display:block}.bs{background:var(--sf)}.bs2{background:var(--sf2)}.ca{color:var(--acc)}.ci{color:var(--ink)}.cm{color:var(--mut)}.cw{color:var(--acci)}.f{display:flex}.fw{flex-wrap:wrap}.g2{gap:0.5rem}.g3{gap:0.75rem}.g4{gap:1rem}.g6{gap:2rem}.g8{gap:4rem}.gr{display:grid}.gr>*{min-width:0}.hf{height:100%}.ib{display:inline-block}.m0{margin:0}.mb2{margin-bottom:0.5rem}.mb4{margin-bottom:1rem}.md{font-weight:500}.mt2{margin-top:0.5rem}.mt3{margin-top:0.75rem}.mt5{margin-top:1.5rem}.mt6{margin-top:2rem}.mt7{margin-top:3rem}.mt8{margin-top:4rem}.mx{margin-inline:auto}.my4{margin-block:1rem}.nu{text-decoration:none}.nw{white-space:nowrap}.oh{overflow:hidden}.p0{padding:0}.p4{padding:1rem}.p6{padding:2rem}.px3{padding-inline:0.75rem}.px4{padding-inline:1rem}.py1{padding-block:0.25rem}.py2{padding-block:0.5rem}.py3{padding-block:0.75rem}.py4{padding-block:1rem}.py8{padding-block:4rem}.r{border-radius:var(--r)}.r2{border-radius:calc(var(--r)*2)}.rp{border-radius:999px}.rt{text-align:right}.sb{font-weight:600}.sh{box-shadow:0 24px 60px rgb(0 0 0/.3)}.sy4>*+*{margin-top:1rem}.t1{font-size:0.875rem;line-height:1.5}.t2{font-size:1rem;line-height:1.5}.t3{font-size:1.125rem;line-height:1.5}.t4{font-size:1.25rem;line-height:1.5}.tn{font-variant-numeric:tabular-nums}.tt{letter-spacing:-.025em}.x{flex:1}@media(min-width:768px){.m-c2{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}@keyframes ss-rise{from{transform:translateY(24px)}}::view-transition-group(*){animation-duration:.3s}</style>
 
   <!-- 1. State is JSON in the page. From PHP: <?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?> -->
   <script type="application/json" data-state="app" data-root="root">
     { "name": "", "showName": false, "text": "fruit salad", "number": 22, "largest": 23, "smallest": 11, "count": 0,
       "user": { "city": "Punta Gorda" }, "todos": [{ "text": "ship v3", "done": true }, { "text": "write docs", "done": false }],
-      "level": 40, "accent": "#1f883d", "spin": false }
+      "level": 40, "accent": "#1a7a37", "spin": false }
   </script>
 </head>
 <body>
 
-<header class="bar wrap">
-  <strong>minim</strong>
-  <nav aria-label="Site">
-    <a href="https://github.com/hertonwork/minim">GitHub</a>
-    <a href="https://www.npmjs.com/package/@labs_kai/minim">npm</a>
-    <a class="button primary" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Get the snippet</a>
+<header class="wrap mx f ac g6 py4">
+  <strong class="t4 tt x">minim</strong>
+  <nav class="f ac g4 md nw" aria-label="Site">
+    <a href="https://github.com/hertonwork/minim" class="nu">GitHub</a>
+    <a href="https://www.npmjs.com/package/@labs_kai/minim" class="nu">npm</a>
+    <a class="r ba cw px4 py2 nu ib an-fx" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Get the snippet</a>
   </nav>
 </header>
 
 <main id="root">
 
   <section>
-    <div class="wrap cols wide-left">
-      <div>
+    <div class="wrap mx gr g8 m-c2 wl ac">
+      <div class="an-rise">
         <h1>Reactive HTML in&nbsp;1.2&nbsp;KB.</h1>
-        <p class="lede">Minim binds the HTML your server already rendered to a JSON state tag. No build step, no dependencies, nothing <code>eval</code>'d, not one line of JavaScript on the page — and it is the smallest library that does this.</p>
-        <p class="actions"><a class="button primary" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Paste the 1.2 KB snippet</a> <a class="button" href="#bind">See it work</a></p>
+        <p class="t3 mt6">Minim binds the HTML your server already rendered to a JSON state tag. No build step, no dependencies, nothing <code>eval</code>'d, not one line of JavaScript on the page — and it is the smallest library that does this.</p>
+        <p class="f fw g2 mt7"><a class="r ba cw px4 py3 nu sb ib an-fx" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Paste the 1.2 KB snippet</a> <a class="r bs2 ci px4 py3 nu sb ib an-fx btn" href="#bind">See it work</a></p>
       </div>
-      <div class="size" data-ui aria-label="Size comparison, minified and gzipped">
-        <p class="title">Minified + gzipped</p>
-        <p class="kb"><b>1.2 KB</b><span>Minim lite — every binding on this page</span></p>
-        <ol class="bars" aria-label="HTML-first libraries">
-          <li class="me"><span>Minim lite</span><i aria-hidden="true" style="--w: 6.3"></i><b>1,260 B</b></li>
-          <li><span>petite-vue</span><i aria-hidden="true" style="--w: 35.6"></i><b>7,080 B · 5.6×</b></li>
-          <li><span>Alpine.js</span><i aria-hidden="true" style="--w: 100"></i><b>19,911 B · 16×</b></li>
+      <div class="r2 bs p6 an-rise" aria-label="Size comparison, minified and gzipped">
+        <p class="t4 b m0">Minified + gzipped</p>
+        <p class="f ae fw g4 mt3 mb4"><b class="kb ca">1.2 KB</b><span class="t1 cm">Minim lite — every binding on this page</span></p>
+        <ol class="bars p0 m0 t1" style="list-style:none" aria-label="HTML-first libraries">
+          <li class="ca b"><span class="rt">Minim lite</span><i class="bar ba" aria-hidden="true" style="--w: 6.3"></i><b class="tn">1,260 B</b></li>
+          <li class="cm md"><span class="rt">petite-vue</span><i class="bar bs2" aria-hidden="true" style="--w: 35.6"></i><b class="tn nw md">7,080 B · 5.6×</b></li>
+          <li class="cm md"><span class="rt">Alpine.js</span><i class="bar bs2" aria-hidden="true" style="--w: 100"></i><b class="tn nw md">19,911 B · 16×</b></li>
         </ol>
-        <p class="title small">Reactive core only</p>
-        <ol class="bars" aria-label="Reactive cores">
-          <li class="me"><span>Minim</span><i aria-hidden="true" style="--w: 42.3"></i><b>516 B</b></li>
-          <li><span>usignal</span><i aria-hidden="true" style="--w: 72.3"></i><b>882 B · 1.7×</b></li>
-          <li><span>VanJS</span><i aria-hidden="true" style="--w: 94.5"></i><b>1,153 B · 2.2×</b></li>
-          <li><span>hyperactiv</span><i aria-hidden="true" style="--w: 100"></i><b>1,220 B · 2.4×</b></li>
+        <p class="t2 b mt5 mb2">Reactive core only</p>
+        <ol class="bars p0 m0 t1" style="list-style:none" aria-label="Reactive cores">
+          <li class="ca b"><span class="rt">Minim</span><i class="bar ba" aria-hidden="true" style="--w: 42.3"></i><b class="tn">516 B</b></li>
+          <li class="cm md"><span class="rt">usignal</span><i class="bar bs2" aria-hidden="true" style="--w: 72.3"></i><b class="tn nw md">882 B · 1.7×</b></li>
+          <li class="cm md"><span class="rt">VanJS</span><i class="bar bs2" aria-hidden="true" style="--w: 94.5"></i><b class="tn nw md">1,153 B · 2.2×</b></li>
+          <li class="cm md"><span class="rt">hyperactiv</span><i class="bar bs2" aria-hidden="true" style="--w: 100"></i><b class="tn nw md">1,220 B · 2.4×</b></li>
         </ol>
       </div>
     </div>
   </section>
 
-  <section class="tone">
-    <div class="wrap">
-      <div class="stack">
+  <section class="bs">
+    <div class="wrap mx">
+      <div class="sy4 an-rise">
         <h2>Size matters.</h2>
         <p>Measured the same way for everyone: the latest npm source, terser, <code>gzip -9</code>. Minim's reactive core is the smallest on the chart, and the paste-in build with every binding on this page is a fifth the size of petite-vue and a sixteenth of Alpine.</p>
       </div>
-      <figure class="chart" style="margin-top: 2.5rem">
+      <figure class="chart mt8 an-rise">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 362" role="img" aria-label="Size comparison: Minim is the smallest in both groups">
 <rect width="880" height="362" fill="transparent"/>
 <text x="24" y="38" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="var(--ink)">Reactive core</text>
-<text x="856" y="38" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="var(--muted)" text-anchor="end">state + effects, min+gzip</text>
+<text x="856" y="38" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="var(--mut)" text-anchor="end">state + effects, min+gzip</text>
 <text x="188" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="var(--ink)" text-anchor="end">Minim core</text>
-<rect x="200" y="60" width="120" height="18" rx="4" fill="var(--accent)"/>
-<text x="328" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">516 B</text>
+<rect x="200" y="60" width="120" height="18" rx="4" fill="var(--acc)"/>
+<text x="328" y="73" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="var(--acc)">516 B</text>
 <text x="188" y="103" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">usignal</text>
-<rect x="200" y="90" width="206" height="18" rx="4" fill="var(--surface-2)"/>
-<text x="414" y="103" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">882 B  ·  1.7× Minim</text>
+<rect x="200" y="90" width="206" height="18" rx="4" fill="var(--sf2)"/>
+<text x="414" y="103" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--mut)">882 B  ·  1.7× Minim</text>
 <text x="188" y="133" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">VanJS</text>
-<rect x="200" y="120" width="269" height="18" rx="4" fill="var(--surface-2)"/>
-<text x="477" y="133" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">1,153 B  ·  2.2× Minim</text>
+<rect x="200" y="120" width="269" height="18" rx="4" fill="var(--sf2)"/>
+<text x="477" y="133" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--mut)">1,153 B  ·  2.2× Minim</text>
 <text x="188" y="163" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">hyperactiv</text>
-<rect x="200" y="150" width="285" height="18" rx="4" fill="var(--surface-2)"/>
-<text x="493" y="163" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">1,220 B  ·  2.4× Minim</text>
+<rect x="200" y="150" width="285" height="18" rx="4" fill="var(--sf2)"/>
+<text x="493" y="163" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--mut)">1,220 B  ·  2.4× Minim</text>
 <text x="188" y="193" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">nanostores</text>
-<rect x="200" y="180" width="546" height="18" rx="4" fill="var(--surface-2)"/>
-<text x="754" y="193" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">2,339 B  ·  4.5× Minim</text>
+<rect x="200" y="180" width="546" height="18" rx="4" fill="var(--sf2)"/>
+<text x="754" y="193" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--mut)">2,339 B  ·  4.5× Minim</text>
 <text x="24" y="244" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="var(--ink)">HTML-first, no JavaScript on the page</text>
-<text x="856" y="244" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="var(--muted)" text-anchor="end">bind data-* attributes, min+gzip</text>
+<text x="856" y="244" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="var(--mut)" text-anchor="end">bind data-* attributes, min+gzip</text>
 <text x="188" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="var(--ink)" text-anchor="end">Minim lite (everything)</text>
-<rect x="200" y="266" width="35" height="18" rx="4" fill="var(--accent)"/>
-<text x="243" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">1,260 B</text>
+<rect x="200" y="266" width="35" height="18" rx="4" fill="var(--acc)"/>
+<text x="243" y="279" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="var(--acc)">1,260 B</text>
 <text x="188" y="309" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">petite-vue</text>
-<rect x="200" y="296" width="194" height="18" rx="4" fill="var(--surface-2)"/>
-<text x="402" y="309" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">7,080 B  ·  5.6× Minim</text>
+<rect x="200" y="296" width="194" height="18" rx="4" fill="var(--sf2)"/>
+<text x="402" y="309" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--mut)">7,080 B  ·  5.6× Minim</text>
 <text x="188" y="339" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="var(--ink)" text-anchor="end">Alpine.js</text>
-<rect x="200" y="326" width="546" height="18" rx="4" fill="var(--surface-2)"/>
-<text x="754" y="339" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--muted)">19,911 B  ·  16× Minim</text>
+<rect x="200" y="326" width="546" height="18" rx="4" fill="var(--sf2)"/>
+<text x="754" y="339" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="var(--mut)">19,911 B  ·  16× Minim</text>
 </svg>
-        <figcaption>Bytes, minified and gzipped. The full table with brotli numbers is in the <a href="https://github.com/hertonwork/minim#the-numbers">README</a>.</figcaption>
+        <figcaption class="cm t1 mt3">Bytes, minified and gzipped. The full table with brotli numbers is in the <a href="https://github.com/hertonwork/minim#the-numbers">README</a>.</figcaption>
       </figure>
     </div>
   </section>
 
   <section id="bind">
-    <div class="wrap">
-      <div class="stack">
+    <div class="wrap mx">
+      <div class="sy4 an-rise">
         <h2>It binds by key, not by expression.</h2>
         <p>An input with <code>data-model</code> writes to the state; anything with <code>data-watch</code> reads from it; <code>data-bind</code> mirrors values into attributes; a <code>&lt;button command="--inc"&gt;</code> changes it with no handler at all. Keys can be dotted paths. There is no expression language and nothing is evaluated, which is why Minim runs under a strict Content-Security-Policy. The panel on the right is the state of this page, live.</p>
       </div>
-      <div class="cols" style="margin-top: 2rem">
-        <div data-ui>
-          <p class="title">Change the state</p>
+      <div class="gr g8 m-c2 mt8 an-rise">
+        <div class="r2 bs p6">
+          <p class="t4 b mb4">Change the state</p>
           <div class="fields">
             <label>Name <input data-model="name" placeholder="Type your name"></label>
             <label>Text <input data-model="text"></label>
@@ -251,17 +179,17 @@
             <label>Max <input type="number" data-model="largest" data-bind="min:smallest"></label>
           </div>
           <label><input type="checkbox" data-model="showName"> Show the greeting</label>
-          <p class="title small">Or press a button — no handlers, no <code>onclick</code>, just <code>command</code></p>
-          <p>
-            <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
-            <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
-            <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
-            <button type="button" commandfor="root" command="--push" data-key="todos" data-as="text" value="call mom">add a todo</button>
+          <p class="t2 b mt5 mb2">Or press a button — no handlers, no <code>onclick</code>, just <code>command</code></p>
+          <p class="f fw g2">
+            <button type="button" commandfor="root" command="--inc" value="count" class="r bs2 ci px4 py2 an-fx btn">count +1</button>
+            <button type="button" commandfor="root" command="--toggle" value="showName" class="r bs2 ci px4 py2 an-fx btn">toggle greeting</button>
+            <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu" class="r bs2 ci px4 py2 an-fx btn">text = tiramisu</button>
+            <button type="button" commandfor="root" command="--push" data-key="todos" data-as="text" value="call mom" class="r bs2 ci px4 py2 an-fx btn">add a todo</button>
           </p>
         </div>
-        <div data-ui>
-          <p class="title">What the page sees</p>
-          <p class="greeting" data-show="showName" hidden>Hello, <span data-watch="name"></span>. The text says “<span data-watch="text">fruit salad</span>”.</p>
+        <div class="r2 bs p6">
+          <p class="t4 b mb4">What the page sees</p>
+          <p class="t4 sb mb4" data-show="showName" hidden>Hello, <span data-watch="name"></span>. The text says “<span data-watch="text">fruit salad</span>”.</p>
           <div class="json">{
   "name": "<span data-watch="name"></span>",
   "showName": <span data-watch="showName">false</span>,
@@ -273,12 +201,12 @@
   "user": { "city": "<span data-watch="user.city">Punta Gorda</span>" },
   "todos": [ <span data-watch="todos.length">2</span> items ],
   "level": <span data-watch="level">40</span>,
-  "accent": "<span data-watch="accent">#1f883d</span>",
+  "accent": "<span data-watch="accent">#1a7a37</span>",
   "spin": <span data-watch="spin">false</span>
 }</div>
         </div>
       </div>
-      <pre style="margin-top: 2rem"><code>&lt;script type="application/json" data-state="app"&gt;{ "name": "", "count": 0, "showName": false }&lt;/script&gt;
+      <pre class="r bs p4 mt8 an-rise"><code>&lt;script type="application/json" data-state="app"&gt;{ "name": "", "count": 0, "showName": false }&lt;/script&gt;
 
 &lt;input data-model="name"&gt;
 &lt;p data-show="showName" hidden&gt;Hello, &lt;b data-watch="name"&gt;&lt;/b&gt;&lt;/p&gt;
@@ -287,103 +215,102 @@
   </section>
 
   <section class="field">
-    <div class="wrap cols wide-right">
-      <div class="stack">
+    <div class="wrap mx gr g8 m-c2 wr ac">
+      <div class="sy4 an-rise">
         <h2>Buttons without JavaScript.</h2>
         <p>Plain <code>&lt;button command="--inc" commandfor="root"&gt;</code> elements. The browser's Invoker Commands API delivers the click as a <code>command</code> event and Minim applies it to the state — the same key the panel above shows. Nothing to wire.</p>
-        <p>
-          <button type="button" commandfor="root" command="--inc" value="count">count +1</button>
-          <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
+        <p class="f fw g2">
+          <button type="button" commandfor="root" command="--inc" value="count" class="r px4 py2 an-fx">count +1</button>
+          <button type="button" commandfor="root" command="--inc" value="count" data-step="-1" class="r px4 py2 an-fx">count −1</button>
         </p>
       </div>
-      <div>
-        <div class="big" data-watch="count" aria-live="polite">0</div>
+      <div class="an-rise">
+        <div class="big b tn" data-watch="count" aria-live="polite">0</div>
         <p>clicks, and <b data-watch="todos.length">2</b> todos</p>
       </div>
     </div>
   </section>
 
   <section>
-    <div class="wrap cols wide-left">
-      <div data-ui>
-        <p class="title">Todos</p>
+    <div class="wrap mx gr g8 m-c2 wl">
+      <div class="r2 bs p6 an-rise">
+        <p class="t4 b mb4">Todos</p>
         <input data-command="keydown.Enter:--push" data-key="todos" data-as="text" placeholder="What needs doing? Press Enter" aria-label="New todo">
-        <ul class="todos">
+        <ul class="todos p0 m0" style="list-style:none">
           <template data-each="todos">
-            <li>
+            <li class="f ac g3 r bg px4 py3 mt2 an-in">
               <input type="checkbox" data-model="$.done" aria-label="Done">
-              <span data-watch="$.text" data-class="done:$.done"></span>
-              <button type="button" commandfor="root" command="--remove" data-key="todos" value="$i" aria-label="Remove">×</button>
+              <span class="x" data-watch="$.text" data-class="done:$.done"></span>
+              <button type="button" commandfor="root" command="--remove" data-key="todos" value="$i" aria-label="Remove" class="r bs2 ci px3 py1 an-fx btn">×</button>
             </li>
           </template>
         </ul>
       </div>
-      <div class="stack">
+      <div class="sy4 an-rise">
         <h2>A list, animated, still no JavaScript.</h2>
         <p>Type and press <kbd>Enter</kbd>: that's <code>data-command="keydown.Enter:--push"</code> on the input. Each item is stamped from a <code>&lt;template data-each="todos"&gt;</code> where <code>$</code> is the item, <code>$.done</code> one of its fields and <code>$i</code> its index.</p>
-        <p>Adding and removing animates through the View Transitions API where the browser has it, and with <code>@starting-style</code> everywhere else. The input and the "add a todo" button carry <code>data-as="text"</code>, so what they push is an object like the two items the page started with.</p>
+        <p>Adding and removing animates through the View Transitions API where the browser has it (<code>an-vt</code>), and with <code>@starting-style</code> everywhere else (<code>an-in</code> on each item). The input and the "add a todo" button carry <code>data-as="text"</code>, so what they push is an object like the two items the page started with.</p>
       </div>
     </div>
   </section>
 
-  <section class="tone theme" data-bind="--accent:accent">
-    <div class="wrap">
-      <div class="stack">
+  <section class="bs an-tone an-vt" data-bind="--acc:accent">
+    <div class="wrap mx">
+      <div class="sy4 an-rise">
         <h2>State drives CSS, and CSS does the animation.</h2>
-        <p><code>data-bind</code> also writes CSS custom properties, and <code>data-class</code> toggles classes. The transitions and keyframes live in the stylesheet; state only flips the switch. This section's accent, the bar and the spinning mark are all driven by the keys shown in the panel at the top of the page.</p>
+        <p><code>data-bind</code> also writes CSS custom properties, and <code>data-class</code> toggles classes. The transitions and keyframes live in the stylesheet — here they are sscss's motion utilities, <code>an-grow</code>, <code>an-spin</code>, <code>an-tone</code> — and state only flips the switch. This section's accent, the bar and the spinning mark are all driven by the keys shown in the panel at the top of the page.</p>
       </div>
-      <div class="cols" style="margin-top: 2.5rem">
-        <div data-ui>
+      <div class="gr g8 m-c2 mt8 an-rise">
+        <div class="r2 bg p6">
           <label>Level: <span data-watch="level">40</span>% <input type="range" min="0" max="100" data-model="level" aria-label="Level"></label>
-          <div class="meter" data-bind="--pct:level" role="progressbar" aria-label="Level" aria-valuemin="0" aria-valuemax="100"><b></b></div>
-          <p>
-            <button type="button" commandfor="root" command="--inc" value="level" data-step="10">+10</button>
-            <button type="button" commandfor="root" command="--inc" value="level" data-step="-10">−10</button>
+          <div class="meter bs2 rp oh my4" data-bind="--pct:level" role="progressbar" aria-label="Level" aria-valuemin="0" aria-valuemax="100"><b class="bk hf ba rp an-grow an-tone"></b></div>
+          <p class="f fw g2">
+            <button type="button" commandfor="root" command="--inc" value="level" data-step="10" class="r bs2 ci px4 py2 an-fx btn">+10</button>
+            <button type="button" commandfor="root" command="--inc" value="level" data-step="-10" class="r bs2 ci px4 py2 an-fx btn">−10</button>
           </p>
         </div>
-        <div data-ui>
+        <div class="r2 bg p6">
           <label>Accent of this section <input type="color" data-model="accent" aria-label="Accent color"></label>
-          <p>
-            <button type="button" commandfor="root" command="--set" data-key="accent" value="#e5484d">red</button>
-            <button type="button" commandfor="root" command="--set" data-key="accent" value="#1f883d">green</button>
-            <button type="button" commandfor="root" command="--toggle" value="spin">spin</button>
+          <p class="f fw g2">
+            <button type="button" commandfor="root" command="--set" data-key="accent" value="#e5484d" class="r bs2 ci px4 py2 an-fx btn">red</button>
+            <button type="button" commandfor="root" command="--set" data-key="accent" value="#1a7a37" class="r bs2 ci px4 py2 an-fx btn">green</button>
+            <button type="button" commandfor="root" command="--toggle" value="spin" class="r bs2 ci px4 py2 an-fx btn">spin</button>
           </p>
-          <p><span class="mark" data-class="spin:spin">minim</span></p>
+          <p><span class="mark ib b ca an-tone" data-class="an-spin:spin">minim</span></p>
         </div>
       </div>
     </div>
   </section>
 
   <section>
-    <div class="wrap cols">
-      <div class="stack">
+    <div class="wrap mx gr g8 m-c2">
+      <div class="sy4 an-rise">
         <h2>A native dialog, the same state.</h2>
         <p>The browser's own <code>command="show-modal"</code> opens a <code>&lt;dialog&gt;</code>. The fields inside bind to the same keys as everything else, so the greeting and the panel at the top update behind the modal while you type.</p>
-        <p><button type="button" class="primary" commandfor="profile" command="show-modal">Edit profile</button></p>
-        <dialog id="profile">
-          <h3>Profile</h3>
+        <p class="f fw g2"><button type="button" class="r ba cw px4 py2 an-fx" commandfor="profile" command="show-modal">Edit profile</button></p>
+        <dialog id="profile" class="sh">
+          <p class="t4 b mb4">Profile</p>
           <label>Name <input data-model="name"></label>
           <label>City <input data-model="user.city"></label>
           <label><input type="checkbox" data-model="showName"> Show the greeting</label>
-          <button type="button" class="primary" commandfor="profile" command="close">Done</button>
+          <button type="button" class="r ba cw px4 py2 an-fx" commandfor="profile" command="close">Done</button>
         </dialog>
       </div>
-      <div class="stack">
+      <div class="sy4 an-rise">
         <h2>Markup that arrives later binds itself.</h2>
         <p>A <code>fetch</code> response, an htmx swap, a PHP partial — anything inserted after load is picked up by a MutationObserver and bound. Removed markup lets go of its bindings. The only script written for this page is the three lines that fake the fragment below.</p>
-        <p><button type="button" id="inject">Inject a fragment</button> <button type="button" id="remove">Remove it</button></p>
+        <p class="f fw g2"><button type="button" id="inject" class="r bs2 ci px4 py2 an-fx btn">Inject a fragment</button> <button type="button" id="remove" class="r bs2 ci px4 py2 an-fx btn">Remove it</button></p>
         <div id="late"></div>
       </div>
     </div>
   </section>
 
-
   <section>
-    <div class="wrap cols wide-left">
-      <div class="stack">
+    <div class="wrap mx gr g8 m-c2 wl">
+      <div class="sy4 an-rise">
         <h2>Use it.</h2>
         <p>Paste the lite build into <code>&lt;head&gt;</code> and your page makes no request for a script at all, which is how this page scores what it scores. Or load the module build, which adds lists, classes, CSS variables and element commands.</p>
-        <pre><code>&lt;!-- paste-in: 1.2 KB, the snippet is in lite/README.md --&gt;
+        <pre class="r bs p4"><code>&lt;!-- paste-in: 1.2 KB, the snippet is in lite/README.md --&gt;
 &lt;script&gt;/* minim.min.js */&lt;/script&gt;
 
 &lt;!-- or the module build, auto-boots --&gt;
@@ -392,18 +319,20 @@
 &lt;!-- npm --&gt;
 npm i @labs_kai/minim</code></pre>
       </div>
-      <div class="stack">
-        <h3>What a page needs</h3>
+      <div class="sy4 an-rise">
+        <p class="t4 b m0">What a page needs</p>
         <p>A JSON state tag. Attributes that name keys: <code>data-model</code>, <code>data-watch</code>, <code>data-show</code>, <code>data-bind</code>, <code>data-class</code>, <code>data-each</code>, <code>data-command</code>. Buttons with <code>command</code>. That's the whole API.</p>
-        <p class="actions"><a class="button primary" href="https://github.com/hertonwork/minim">Read the README</a></p>
+        <p class="t4 b m0 mt6">And for the look</p>
+        <p>This page is styled with <a href="https://hertonwork.github.io/sscss/">sscss</a>: short utility classes, generated into one <code>&lt;style&gt;</code> with only the rules used, dark mode and the motion utilities included. Minim lite and the sscss core are 1.6 KB together.</p>
+        <p class="f fw g2 mt6"><a class="r ba cw px4 py3 nu sb ib an-fx" href="https://github.com/hertonwork/minim">Read the README</a> <a class="r bs2 ci px4 py3 nu sb ib an-fx btn" href="https://github.com/hertonwork/sscss">sscss</a></p>
       </div>
     </div>
   </section>
 
 </main>
 
-<footer>
-  <div class="wrap">
+<footer class="py8 cm t1">
+  <div class="wrap mx">
     <p>MPL-2.0. A <i>minim</i> is the smallest unit of liquid measure, and a palindrome. Made in Florida by <a href="https://github.com/hertonwork">Herton</a>. <a href="https://github.com/hertonwork/minim/blob/main/index.html">Source of this page</a>.</p>
   </div>
 </footer>
@@ -414,7 +343,7 @@ npm i @labs_kai/minim</code></pre>
 <!-- Demo-only: fake a server fragment arriving later, so the late-DOM demo has something to show. -->
 <script>
   document.getElementById('inject').onclick = () => document.getElementById('late').insertAdjacentHTML('beforeend',
-    '<p data-todo>A fragment inserted after load. It sees name = <em data-watch="name"></em></p>');
+    '<p data-todo class="r bg px4 py3 mt3 an-in">A fragment inserted after load. It sees name = <em data-watch="name"></em></p>');
   document.getElementById('remove').onclick = () => document.querySelector('[data-todo]')?.remove();
 </script>
 </body>

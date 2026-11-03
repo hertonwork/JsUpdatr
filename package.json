@@ -1,7 +1,7 @@
 {
     "name": "@labs_kai/minim",
     "version": "3.0.1",
-    "description": "Minim \u2014 the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
+    "description": "Minim — the smallest HTML-first reactive library. 0.5 KB core, 1.2 KB with attribute bindings. No build, no dependencies, nothing eval'd.",
     "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -33,8 +33,9 @@
         "size": "node lite/build.mjs --size",
         "build:page": "node docs/build-page.mjs",
         "chart": "node docs/size-chart.mjs",
-        "build:skill": "node -e \"require('fs').copyFileSync('dist/minim.min.js','skills/minim-page/assets/minim.min.js');require('fs').copyFileSync('lite/minim.min.js','skills/minim-page/assets/minim-lite.min.js')\"",
-        "check:page": "node skills/minim-page/scripts/check.mjs index.html"
+        "build:skill": "node -e \"const f=require('fs');f.copyFileSync('dist/minim.min.js','skills/minim-page/assets/minim.min.js');f.copyFileSync('lite/minim.min.js','skills/minim-page/assets/minim-lite.min.js')\"",
+        "check:page": "node skills/minim-page/scripts/check.mjs index.html",
+        "sync:sscss": "npm i --no-save @labs_kai/sscss@latest && node -e \"const f=require('fs');f.copyFileSync('node_modules/@labs_kai/sscss/skills/sscss/scripts/sscss.mjs','skills/minim-page/scripts/sscss.mjs');f.copyFileSync('node_modules/@labs_kai/sscss/skills/sscss/references/vocab.md','skills/minim-page/references/sscss.md')\" && npm run build"
     },
     "repository": {
         "type": "git",
