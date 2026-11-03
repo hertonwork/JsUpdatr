@@ -64,8 +64,8 @@ await page.click('button[command="--push"]');
 check('--push on an array updates todos.length', (await text('[data-watch="todos.length"]')) === '3');
 
 // console-driven state change (the "fun" part)
-await page.evaluate(() => { app.favorites = '🍉'; });
-check('state changed from outside re-renders', (await text('[data-watch="favorites"]')) === '🍉');
+await page.evaluate(() => { app.text = 'from console'; });
+check('state changed from outside re-renders', (await text('[data-watch="text"]')) === 'from console');
 
 // late DOM binds itself; removed DOM releases its effect
 await page.click('#inject');
