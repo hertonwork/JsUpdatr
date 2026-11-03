@@ -42,7 +42,7 @@ Native commands (`show-modal`, `close`, `toggle-popover`, `show-popover`, `hide-
 | `--set` | `data-key`, `value` | `state[key] = value` — `"true"`/`"false"` become booleans, numeric strings Numbers |
 | `--toggle` | `value` (or `data-key`) = key | `state[key] = !state[key]` |
 | `--inc` | `value` (or `data-key`) = key, `data-step` (default 1) | `state[key] = (state[key] || 0) + step` |
-| `--push` | `data-key` = array key, `value` | `state[key].push(value)`; ignored when `value` is empty; an input source is cleared afterwards |
+| `--push` | `data-key` = array key, `value`, optional `data-as` | `state[key].push(value)`, or `push({ [as]: value })` with `data-as="text"` so pushed items match object items; ignored when `value` is empty; an input source is cleared afterwards |
 | `--remove` | `data-key` = array key, `value` = index | `state[key].splice(index, 1)` (module) |
 
 Old browsers without `command` events: the module build falls back to a click listener on `button[command^="--"]`.

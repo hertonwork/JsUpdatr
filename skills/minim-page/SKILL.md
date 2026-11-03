@@ -55,9 +55,10 @@ Write semantic HTML and bind with attributes whose values are **keys**, never ex
 | Class follows state | `<li data-class="done:$.done">` |
 | A list | `<template data-each="items"> … $ $.field $i … </template>` |
 | A button that changes state | `<button type="button" commandfor="root" command="--inc" value="seats">` |
-| Any event changes state | `<input data-command="keydown.Enter:--push" data-key="items">` |
+| Any event changes state | `<input data-command="keydown.Enter:--push" data-key="items" data-as="text">` |
 
-Commands: `--set` (`data-key` + `value`), `--toggle`, `--inc` (`data-step`), `--push`, `--remove` (`value` = index).
+Commands: `--set` (`data-key` + `value`), `--toggle`, `--inc` (`data-step`), `--push` (`data-as="text"` pushes
+`{ text: value }` so new items match object items in the list), `--remove` (`value` = index).
 `commandfor` must point at the bound root's id. Native commands work too: `command="show-modal"` / `"close"` on a
 `<dialog>`, `"toggle-popover"` on a popover — use them instead of writing a modal.
 
