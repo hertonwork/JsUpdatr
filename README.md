@@ -126,7 +126,7 @@ start hidden): Minim then only keeps it in sync, and nothing moves on load. Mark
 | `--inc` | `value` = key, `data-step` (default 1) | `state[key] += step` |
 | `--toggle` | `value` = key | `state[key] = !state[key]` |
 | `--set` | `data-key`, `value` | `state[key] = value` (numeric strings become Numbers) |
-| `--push` | `data-key` (an array), `value` | `state[key].push(value)`; from an input, clears it afterwards |
+| `--push` | `data-key` (an array), `value`, optional `data-as` | `state[key].push(value)`, or `push({ [as]: value })` with `data-as="text"`; from an input, clears it afterwards |
 | `--remove` | `data-key` (an array), `value` = index | `state[key].splice(index, 1)` |
 
 ### JavaScript API

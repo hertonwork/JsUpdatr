@@ -83,6 +83,7 @@ await page.waitForTimeout(400);
 check('data-each renders the seeded items', (await page.locator('.todos li').count()) === 3);
 await page.fill('[data-command]', 'test the page'); await page.press('[data-command]', 'Enter'); await page.waitForTimeout(500);
 check('Enter on data-command input pushes and clears', (await page.locator('.todos li').count()) === 4 && (await page.inputValue('[data-command]')) === '');
+check('pushed items render their text (data-as="text")', (await page.locator('.todos li span').allTextContents()).slice(-2).join('|') === 'call mom|test the page');
 await page.click('.todos li:nth-child(1) button[command="--remove"]'); await page.waitForTimeout(500);
 check('--remove splices the item', (await page.locator('.todos li').count()) === 3 && (await text('[data-watch="todos.length"]')) === '3');
 check('data-class toggles a class from item state', await page.evaluate(() => { const li = document.querySelector('.todos li'); return li.querySelector('span').classList.contains('done') === li.querySelector('input').checked; }));
