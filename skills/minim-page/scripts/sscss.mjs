@@ -181,12 +181,16 @@ export function cssFor(classes, { withCore = true } = {}) {
   return { css: css + [...globals].join(''), unknown };
 }
 
-/** The class names an HTML document uses: class="…" inside tags only, skipping <style> and <script> contents. */
+/** The class names an HTML document uses: class="…" inside tags, plus the classes Minim toggles from state with
+ *  data-class="cls:key cls2:key2" (they are not in any class attribute until the state flips, but the page needs
+ *  their rules). <style> and <script> contents are skipped. */
 export function classesIn(html) {
   const used = new Set();
   const markup = html.replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<script[\s\S]*?<\/script>/gi, '');
-  for (const tag of markup.matchAll(/<[a-zA-Z][^>]*>/g))
+  for (const tag of markup.matchAll(/<[a-zA-Z][^>]*>/g)) {
     for (const m of tag[0].matchAll(/(?<![\w-])class="([^"]*)"/g)) for (const c of m[1].split(/\s+/)) if (c) used.add(c);
+    for (const m of tag[0].matchAll(/\bdata-class="([^"]*)"/g)) for (const pair of m[1].split(/\s+/)) { const c = pair.split(':')[0]; if (c) used.add(c); }
+  }
   return used;
 }
 
