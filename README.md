@@ -37,7 +37,7 @@
 <p data-show="showName">Hello, <strong data-watch="name"></strong>!</p>
 <button type="button" commandfor="root" command="--inc" value="count">clicked <span data-watch="count"></span> times</button>
 
-<script type="module" src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@labs_kai/minim@3/dist/index.js"></script>
 ```
 
 That is a complete page. The state lives in the JSON tag, the input and the text bind by key, the button needs no handler.
@@ -61,18 +61,18 @@ A *minim* is the smallest unit of liquid measure. It's also a palindrome. Former
 <!-- 1. Paste-in (lite/): one <script> in <head>, 1.2 KB gzipped — the snippet is in lite/README.md -->
 
 <!-- 2. ES module, auto-boots -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@labs_kai/minim@3/dist/index.js"></script>
 
 <!-- 3. Classic script: exposes window.minim and auto-boots -->
-<script src="https://cdn.jsdelivr.net/npm/minimjs@3/dist/minim.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@labs_kai/minim@3/dist/minim.min.js" defer></script>
 ```
 
 ```sh
-npm install minimjs
+npm install @labs_kai/minim
 ```
 
 ```js
-import { reactive, effect, bind } from 'minimjs';
+import { reactive, effect, bind } from '@labs_kai/minim';
 ```
 
 ## Reference
@@ -132,7 +132,7 @@ start hidden): Minim then only keeps it in sync, and nothing moves on load. Mark
 ### JavaScript API
 
 ```js
-import { reactive, effect, bind, tick } from 'minimjs';
+import { reactive, effect, bind, tick } from '@labs_kai/minim';
 
 const state = reactive({ count: 0, items: [] });   // deep: nested objects, arrays and new keys all react
 
