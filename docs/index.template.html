@@ -29,6 +29,7 @@
     section { padding-block: clamp(56px, 9vw, 140px); }
     .wrap { width: min(1120px, 100% - 2 * clamp(20px, 4vw, 32px)); }
     @media (min-width: 768px) { .gr.wl { grid-template-columns: 7fr 5fr; } .gr.wr { grid-template-columns: 5fr 7fr; } }
+    @media (max-width: 440px) { header nav { gap: .75rem; font-size: .95rem; } header nav .ba { padding-inline: .75rem; } }
     /* a section that changes its whole field colour */
     .field { background: #0b0f14; color: #fff; }
     .field code { background: rgb(255 255 255 / .14); }
@@ -86,6 +87,7 @@
   <nav class="f ac g4 md nw" aria-label="Site">
     <a href="https://github.com/hertonwork/minim" class="nu">GitHub</a>
     <a href="https://www.npmjs.com/package/@labs_kai/minim" class="nu">npm</a>
+    <a href="https://hertonwork.github.io/sscss/" class="nu hd m-ib">sscss</a>
     <a class="r ba cw px4 py2 nu ib an-fx" href="https://github.com/hertonwork/minim/blob/main/lite/README.md">Get the snippet</a>
   </nav>
 </header>
