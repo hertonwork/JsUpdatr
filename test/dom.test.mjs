@@ -88,7 +88,7 @@ await page.click('.todos li:nth-child(1) button[command="--remove"]'); await pag
 check('--remove splices the item', (await page.locator('.todos li').count()) === 3 && (await text('[data-watch="todos.length"]')) === '3');
 check('data-class toggles a class from item state', await page.evaluate(() => { const li = document.querySelector('.todos li'); return li.querySelector('span').classList.contains('done') === li.querySelector('input').checked; }));
 await page.click('button[command="--toggle"][value="spin"]');
-check('data-class on the mark', await page.evaluate(() => document.querySelector('.mark').classList.contains('an-spin')));
+check('data-class on the mark, and the spin actually animates', await page.evaluate(() => { const m = document.querySelector('.mark'); return m.classList.contains('an-spin') && getComputedStyle(m).animationName === 'ss-spin'; }));
 await page.evaluate(() => { const r = document.querySelector('[data-model="level"]'); r.value = 75; r.dispatchEvent(new Event('input')); }); await page.waitForTimeout(20);
 check('data-bind writes a CSS variable', await page.evaluate(() => document.querySelector('.meter').style.getPropertyValue('--pct') === '75'));
 await page.click('button[command="show-modal"]');

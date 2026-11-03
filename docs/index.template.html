@@ -75,7 +75,7 @@
 
   <!-- 1. State is JSON in the page. From PHP: <?= json_encode($state, JSON_HEX_TAG|JSON_HEX_AMP) ?> -->
   <script type="application/json" data-state="app" data-root="root">
-    { "name": "", "showName": false, "text": "fruit salad", "number": 22, "largest": 23, "smallest": 11, "count": 0,
+    { "name": "", "showName": false, "text": "fruit salad", "favorites": "🥥 🍓 🍍", "number": 22, "largest": 23, "smallest": 11, "count": 0,
       "user": { "city": "Punta Gorda" }, "todos": [{ "text": "ship v3", "done": true }, { "text": "write docs", "done": false }],
       "level": 40, "accent": "#1a7a37", "spin": false }
   </script>
@@ -145,6 +145,7 @@
           <div class="fields">
             <label>Name <input data-model="name" placeholder="Type your name"></label>
             <label>Text <input data-model="text"></label>
+            <label>Favorites <input data-model="favorites"></label>
             <label>City <small>user.city</small> <input data-model="user.city"></label>
             <label>Number <small>min … max</small> <input type="number" data-model="number" data-bind="min:smallest max:largest"></label>
             <label>Min <input type="number" data-model="smallest" data-bind="max:largest"></label>
@@ -161,11 +162,12 @@
         </div>
         <div class="r2 bs p6">
           <p class="t4 b mb4">What the page sees</p>
-          <p class="t4 sb mb4" data-show="showName" hidden>Hello, <span data-watch="name"></span>. The text says “<span data-watch="text">fruit salad</span>”.</p>
+          <p class="t4 sb mb4" data-show="showName" hidden>Hello, <span data-watch="name"></span>. The text says “<span data-watch="text">fruit salad</span>” and your favorites are <span data-watch="favorites">🥥 🍓 🍍</span>.</p>
           <div class="json">{
   "name": "<span data-watch="name"></span>",
   "showName": <span data-watch="showName">false</span>,
   "text": "<span data-watch="text">fruit salad</span>",
+  "favorites": "<span data-watch="favorites">🥥 🍓 🍍</span>",
   "number": <span data-watch="number">22</span>,
   "smallest": <span data-watch="smallest">11</span>,
   "largest": <span data-watch="largest">23</span>,
