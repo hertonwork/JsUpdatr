@@ -184,9 +184,10 @@ function runCommand(state, command, source, sc) {
         case '--inc':
             setPath(state, key, (cur || 0) + Number(d.step ?? 1), sc);
             break;
-        case '--push':
+        case '--push': // data-as="text" pushes { text: value } instead of the bare value
             if (src.value !== '') {
-                cur.push(coerce(src.value));
+                const v = coerce(src.value);
+                cur.push(d.as ? { [d.as]: v } : v);
                 if (src instanceof HTMLInputElement)
                     src.value = '';
             }

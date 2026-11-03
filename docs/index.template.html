@@ -211,7 +211,7 @@
           <button type="button" commandfor="root" command="--inc" value="count" data-step="-1">count −1</button>
           <button type="button" commandfor="root" command="--toggle" value="showName">toggle greeting</button>
           <button type="button" commandfor="root" command="--set" data-key="text" value="tiramisu">text = tiramisu</button>
-          <button type="button" commandfor="root" command="--push" data-key="todos" value="call mom">add a todo</button>
+          <button type="button" commandfor="root" command="--push" data-key="todos" data-as="text" value="call mom">add a todo</button>
         </p>
       </div>
       <div>
@@ -225,7 +225,7 @@
     <div class="wrap cols wide-left">
       <div data-ui>
         <p class="title">Todos</p>
-        <input data-command="keydown.Enter:--push" data-key="todos" placeholder="What needs doing? Press Enter" aria-label="New todo">
+        <input data-command="keydown.Enter:--push" data-key="todos" data-as="text" placeholder="What needs doing? Press Enter" aria-label="New todo">
         <ul class="todos">
           <template data-each="todos">
             <li>
@@ -239,7 +239,7 @@
       <div class="stack">
         <h2>A list, animated, still no JavaScript.</h2>
         <p>Type and press <kbd>Enter</kbd>: that's <code>data-command="keydown.Enter:--push"</code> on the input. Each item is stamped from a <code>&lt;template data-each="todos"&gt;</code> where <code>$</code> is the item, <code>$.done</code> one of its fields and <code>$i</code> its index.</p>
-        <p>Adding and removing animates through the View Transitions API where the browser has it, and with <code>@starting-style</code> everywhere else. Items pushed from the input are plain strings; the two that came with the page are objects. Mixed lists are fine.</p>
+        <p>Adding and removing animates through the View Transitions API where the browser has it, and with <code>@starting-style</code> everywhere else. The input and the "add a todo" button carry <code>data-as="text"</code>, so what they push is an object like the two items the page started with.</p>
       </div>
     </div>
   </section>

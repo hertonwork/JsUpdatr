@@ -155,7 +155,9 @@ function runCommand(state: object, command: string, source: HTMLElement, sc?: Sc
     case '--set':    setPath(state, d.key!, coerce(src.value), sc); break;
     case '--toggle': setPath(state, key, !cur, sc); break;
     case '--inc':    setPath(state, key, ((cur as number) || 0) + Number(d.step ?? 1), sc); break;
-    case '--push':   if (src.value !== '') { (cur as unknown[]).push(coerce(src.value)); if (src instanceof HTMLInputElement) src.value = ''; } break;
+    case '--push':                                           // data-as="text" pushes { text: value } instead of the bare value
+      if (src.value !== '') { const v = coerce(src.value); (cur as unknown[]).push(d.as ? { [d.as]: v } : v); if (src instanceof HTMLInputElement) src.value = ''; }
+      break;
     case '--remove': (cur as unknown[]).splice(Number(src.value), 1); break;
   }
 }
