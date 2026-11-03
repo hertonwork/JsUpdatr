@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Preflight for a Minim page.  node check.mjs page.html [--lighthouse]
-// Static checks map onto the Lighthouse audits that cost points on a one-file page. --lighthouse also serves the
+// Static checks map onto the Lighthouse audits that cost points on a one-file page, plus whether the sscss block is
+// current. --lighthouse also serves the
 // file on a local port and runs `lighthouse` (mobile + desktop) if it is installed (npm i -g lighthouse) and a
 // Chrome/Chromium is on the machine (set CHROME_PATH if it is not found).
 import { readFile } from 'node:fs/promises';
@@ -95,7 +96,25 @@ for (const m of body.matchAll(/<([a-z]+)\b[^>]*data-watch=["']([^"']+)["'][^>]*>
 }
 for (const m of body.matchAll(/<[a-z]+\b[^>]*data-show=["']([^"']+)["'][^>]*>/gi)) if (!/\bhidden\b/.test(m[0])) notes.push(`data-show="${m[1]}" without hidden — add it if the initial value is falsy`);
 if (has(/@keyframes\s+\w+\s*\{[^}]*opacity/i) && has(/animation-timeline:\s*view\(\)/i)) fail('scroll-driven entrance animates opacity — off-screen text fails the contrast audit; transform only');
-if (!has(/prefers-reduced-motion/i)) notes.push('no prefers-reduced-motion block');
+if (!has(/prefers-reduced-motion/i) && !has(/<style data-sscss>[^<]*prefers-reduced-motion/)) notes.push('no prefers-reduced-motion block');
+
+// --- sscss: the generated block must match the markup (classes change → run scripts/sscss.mjs page.html --write) ---
+if (has(/<style data-sscss>/)) {
+  const { execFileSync } = await import('node:child_process');
+  const gen = path.join(path.dirname(new URL(import.meta.url).pathname), 'sscss.mjs');
+  try {
+    const fresh = execFileSync('node', [gen, file], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const current = (html.match(/<style data-sscss>([^<]*)<\/style>/) || [])[1] || '';
+    if (fresh !== current) fail(`<style data-sscss> is stale — run node scripts/sscss.mjs ${path.basename(file)} --write after editing classes`);
+  } catch (e) { notes.push(`could not verify the sscss block (${e.message.split('\n')[0]})`); }
+  const own = new Set([...html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<style(?![^>]*data-sscss)[^>]*>([\s\S]*?)<\/style>/g)].flatMap((m) => [...m[1].matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((x) => x[1])));
+  const rules = new Set([...((html.match(/<style data-sscss>([^<]*)<\/style>/) || [])[1] || '').matchAll(/\.((?:\\.|[\w-])+)[{:>]/g)].map((m) => m[1].replace(/\\(.)/g, '$1')));
+  const used = new Set([...body.matchAll(/<[a-zA-Z][^>]*>/g)].flatMap((t) => [...t[0].matchAll(/(?<![\w-])class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/).filter(Boolean))));
+  const stray = [...used].filter((c) => !rules.has(c) && !own.has(c));
+  if (stray.length) notes.push(`classes with no rule anywhere (not sscss, not the page's own <style>): ${stray.join(' ')}`);
+} else if (has(/class="[^"]*\b(?:an-fx|an-in|an-rise|m-c2|r2 bs)\b/)) {
+  fail('sscss classes in the markup but no <style data-sscss> block — run node scripts/sscss.mjs page.html --write');
+}
 if (!has(/prefers-color-scheme/i)) notes.push('no dark mode (prefers-color-scheme)');
 if (has(/<pre\b/i) && has(/grid-template-columns/i) && !has(/min-width:\s*0/i)) notes.push('grid + <pre> without min-width: 0 on grid children — may overflow on phones');
 if (/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(body.replace(/<[^>]+>/g, ''))) notes.push('emoji in content');

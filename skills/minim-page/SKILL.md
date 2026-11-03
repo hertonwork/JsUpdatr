@@ -2,8 +2,8 @@
 name: minim-page
 description: >-
   Build a web page that scores 100/100/100/100 on Google PageSpeed (Lighthouse) with zero external JavaScript or CSS
-  requests: one HTML file, Minim (a 1.2–2.5 KB reactive library) inlined, tokens-based inline CSS, system fonts, native
-  dialogs and buttons, CSS-only animation. Use this whenever someone asks for a landing page, demo, product page,
+  requests: one HTML file, Minim (a 1.2–2.5 KB reactive library) inlined, sscss utility classes with the page's CSS
+  generated and inlined (≈1 KB), system fonts, native dialogs and buttons, CSS-only animation. Use this whenever someone asks for a landing page, demo, product page,
   waitlist, form, settings screen, small dashboard, prototype or "quick page" that must be fast, work with no build step,
   pass PageSpeed or Core Web Vitals, run under a strict CSP, or sit on server-rendered HTML (PHP, Rails, Django, htmx) —
   and whenever a page "loads too much JS", "needs to score 100", or "should not pull in React/Vue/Alpine for this".
@@ -13,14 +13,16 @@ description: >-
 # Minim page
 
 A page built this way is one `.html` file. The state is a JSON tag, the HTML binds to it by key with `data-*`
-attributes, Minim is pasted inline at the end of `<body>`, the CSS is inline and driven by custom properties, fonts are
-the system's, images are inline SVG or sized `<img>`s. The browser makes one request for the document and nothing else.
+attributes, Minim is pasted inline at the end of `<body>`, the CSS is sscss — short utility classes whose rules are
+generated for this page and inlined in `<head>` — plus a few lines of the page's own, fonts are the system's, images
+are inline SVG or sized `<img>`s. The browser makes one request for the document and nothing else.
 That is why it scores 100: there is nothing to block rendering, nothing to shift, nothing to download, and no framework
 to execute. It also means no bundler, no `npm install` for the page, and a strict Content-Security-Policy works because
 nothing is `eval`'d — Minim's attributes name keys, never expressions.
 
-Read `references/minim.md` for the full attribute, command and API reference, and `references/design.md` for the
-visual rules before writing CSS. The starter page in `assets/starter.html` already has the structure, tokens and slots.
+Read `references/minim.md` for the full attribute, command and API reference, `references/sscss.md` for the class
+cheat sheet, and `references/design.md` for the visual rules before writing markup. The starter page in
+`assets/starter.html` already has the structure, the classes and the slots.
 
 ## Build order
 
@@ -72,22 +74,35 @@ Don't reach for JavaScript when the platform already has the thing: `<dialog>` +
 need one (a fetch, a clipboard copy), keep it to a few lines inline at the end of `<body>` and have it write to the
 state so Minim renders the result.
 
-### 3. Style with tokens, animate with CSS
+### 3. Style with sscss, animate with its motion utilities
 
-Start from the `:root` tokens in `assets/starter.html` and change the values, not the names: one ground, one surface
-(a tone step, not a border), one ink, one muted ink for secondary notes, one accent plus `--accent-text` (darker, for
-small text on surfaces — the plain accent fails the 4.5:1 contrast audit on a light surface), and the dark-mode set
-under `prefers-color-scheme: dark`. Everything downstream references tokens only.
+The look is [sscss](https://github.com/hertonwork/sscss): one- to three-letter utilities on seven tokens, with
+automatic dark mode. Write classes from `references/sscss.md` — `f ac jb` (flex, centered, space-between),
+`gr g8 m-c2` (grid, gap 4rem, two columns from 768px), `r2 bs p6` (panel: double radius, surface, padding 2rem),
+`r ba cw px4 py2 an-fx` (primary button), `t1 cm` (small muted note), `h-`/`m-`/`l-` variants — and generate the
+page's CSS:
 
-Animation is the stylesheet's job; state only flips a class or a variable:
+```bash
+node <skill>/scripts/sscss.mjs page.html --write    # exactly the rules this page uses → <style data-sscss> before </head>
+node <skill>/scripts/sscss.mjs page.html --check    # exit 1 on a class that is neither sscss nor styled by the page
+```
 
-- `data-class` + `transition` / `@keyframes` for anything that turns on and off.
-- `data-bind="--pct:value"` + `width: calc(var(--pct) * 1%)` + `transition` for meters and gauges.
-- `@starting-style` for anything inserted later (list items, fragments), so it eases in with no script.
-- `data-each` re-renders through the View Transitions API automatically; `::view-transition-group(*)` sets its duration.
-- Entrance motion: `animation-timeline: view()` inside `@supports`, **transform only**. An opacity fade on off-screen
-  content makes Lighthouse's contrast audit read the faded colors and fail the page.
-- Always a `prefers-reduced-motion: reduce` block that zeroes durations.
+Run `--write` again after every edit to the markup; `check.mjs` fails the page when the block is stale. The
+starter's own `<style>` holds the handful of things the vocabulary doesn't do — the type ramps (`h1`, `h2`), inputs,
+`.wrap`, the `.field` section, the `.meter` height — and that is where token overrides go: change the values, keep
+the roles (`--ink --mut --bg --sf --sf2 --acc --acci --r`). The default accent passes 4.5:1 as small text on the
+surface; a new one must too, in both themes, and `--acci` must pass on it.
+
+Animation is the stylesheet's job; state only flips a class or a variable. The `an-*` utilities are the whole
+motion package and all of them are off under `prefers-reduced-motion`:
+
+- `an-fx` on every button (hover tone, press scale).
+- `data-class="an-spin:busy"` for anything that turns on and off; `an-tone` where tokens change.
+- `data-bind="--pct:value"` on a meter's track + `an-grow` on its fill.
+- `an-in` on list items and fragments inserted later (`@starting-style`), `an-vt` once for `data-each` view transitions.
+- `an-rise` on the parts of a section for scroll-driven entrance: **transform only**. An opacity fade on off-screen
+  content makes Lighthouse's contrast audit read the faded colors and fail the page — don't add one in the page's
+  own `<style>` either.
 
 Read `references/design.md` for the look: large display type in one family, headlines of two lines or fewer, sections
 that each have their own composition, surfaces separated by tone, no gradients, shadows, hairlines, eyebrows,
@@ -107,8 +122,9 @@ Paste its contents into `<script>…</script>` **at the end of `<body>`**. There
 paint; in `<head>` it has to wait for the DOM. `scripts/inline.mjs page.html` does the paste for you (it replaces
 `<!--minim-->` or an existing inlined copy) and refuses if the file contains `</script`.
 
-No `<script src>`, no `<link rel=stylesheet>`, no web fonts, no CDN anything. Each external file is a request that can
-block rendering and a point the score can drop; the whole method is that there are none.
+No `<script src>`, no `<link rel=stylesheet>` (not even sscss's own stylesheet — generate), no web fonts, no CDN
+anything. Each external file is a request that can block rendering and a point the score can drop; the whole method
+is that there are none.
 
 ### 5. Check, then look
 
@@ -117,7 +133,8 @@ node <skill>/scripts/check.mjs page.html            # static preflight: the rule
 node <skill>/scripts/check.mjs page.html --lighthouse  # also runs Lighthouse if `lighthouse` is installed (npm i -g lighthouse)
 ```
 
-Fix every line the checker prints — they map one-to-one onto Lighthouse audits that cost points. If you run Lighthouse
+Fix every line the checker prints — they map one-to-one onto Lighthouse audits that cost points, plus two of its
+own: a stale `<style data-sscss>` block and classes that have no rule anywhere. If you run Lighthouse
 against your own local server instead, make it answer `404` for every path but `/`: Lighthouse also fetches
 `/robots.txt`, `/llms.txt` and a manifest, and a server that returns the page for those gets SEO docked to 92. Then open the page at
 a phone width and a desktop width and look: no horizontal scroll, headline on two lines or fewer, every control
@@ -138,7 +155,8 @@ file covers every one we have hit.
   `type="button"` on every non-submit button
 - Text contrast ≥ 4.5:1 (3:1 for large text) in both themes; no text at reduced opacity
 - Images: inline SVG, or `<img>` with `width`, `height`, `alt`, and `loading="lazy"` below the fold
-- `.cols > * { min-width: 0 }` on grids that hold `<pre>` or long words, so nothing overflows on phones
+- Grids are `gr` (its children get `min-width: 0`), so a `<pre>` or a long word can't overflow on phones
+- `<style data-sscss>` regenerated after the last markup edit; every class is sscss or styled in the page's own `<style>`
 - Links with real `href`s; buttons that do things
 - The JSON state tag, the bound markup with initial values pre-rendered, Minim inlined at the end of `<body>`
 
@@ -147,9 +165,14 @@ file covers every one we have hit.
 - **Layout shift from binding.** Fixed by pre-rendering initial values (step 2) and inlining Minim at the end of
   `<body>` (step 4). Reserve height for lists that start empty if the design needs it.
 - **Contrast failures on off-screen text** from opacity-based entrance animations. Transform only.
-- **Contrast failure on accent-colored small text** over a surface. Use `--accent-text`.
+- **Contrast failure on accent-colored small text** over a surface. sscss's default accent (`#1a7a37`) passes;
+  re-check both themes when overriding `--acc`.
 - **Heading order** audit when a panel's title is an `<h3>` before the first `<h2>`.
-- **Horizontal overflow on phones** from a `<pre>` inside a grid column. `min-width: 0`.
+- **Horizontal overflow on phones** from a `<pre>` inside a grid column. `gr` gives children `min-width: 0`; a
+  hand-written `display: grid` must do the same.
+- **A head comment that mentioned `<style data-sscss>`** made an older generator replace the wrong block. Fixed in the
+  generator; still, don't write tag names in comments.
+- **Stale generated CSS**: a class added to the markup after the last `--write` has no rule. `check.mjs` catches it.
 - **Class collisions**: a `.bar` nav and a `.bar` meter. Name things for what they are.
 - **`data-show` and transitions**: `hidden` can't animate. Use `data-class` with a transition when it should.
 - **Editing list items with `data-model="$"`** re-renders the list on every keystroke (the list effect reads every

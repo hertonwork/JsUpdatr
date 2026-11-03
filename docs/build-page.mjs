@@ -17,7 +17,7 @@ if (minim.includes('</script')) throw new Error('minim.min.js contains </script 
 
 let html = tpl.replace('__MINIM__', () => minim.trim()).replace('__CHART__', () => chart.trim());
 const used = classesIn(html);
-const own = new Set([...html.matchAll(/<style(?![^>]*data-sscss)[^>]*>([\s\S]*?)<\/style>/g)].flatMap((s) => [...s[1].matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1])));
+const own = new Set([...html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<style(?![^>]*data-sscss)[^>]*>([\s\S]*?)<\/style>/g)].flatMap((s) => [...s[1].matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1])));
 const { css, unknown } = cssFor([...used]);
 const stray = unknown.filter((c) => !own.has(c));
 if (stray.length) throw new Error(`classes neither in sscss nor styled by the page: ${stray.join(' ')}`);
