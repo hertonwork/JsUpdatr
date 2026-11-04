@@ -3,21 +3,19 @@
 //                   generator vendored in skills/minim-page/scripts/sscss.mjs (refresh it with `npm run sync:sscss`)
 //   __MINIM__     → dist/minim.min.js, inlined, so the page makes no request for a script
 //   __CHART__     → docs/size-inline.svg, inlined, so the chart follows the page's light/dark tokens with no image request
-//   __OCEAN__     → docs/ocean.js, minified with esbuild and inlined: the hero's WebGL ocean
+//   __OCEAN__     → the hero's WebGL ocean: skills/shader-hero's harness + its ocean scene, assembled and minified
 import { readFile, writeFile } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 import path from 'node:path';
-import { transform } from 'esbuild';
 import { cssFor, classesIn } from '../skills/minim-page/scripts/sscss.mjs';
+import { assemble } from '../skills/shader-hero/scripts/inline.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const read = (p) => readFile(path.join(root, p), 'utf8');
 const gz = (s) => gzipSync(s, { level: 9 }).length;
 
-const [tpl, minim, chart, oceanSrc] = await Promise.all([read('docs/index.template.html'), read('dist/minim.min.js'), read('docs/size-inline.svg'), read('docs/ocean.js')]);
+const [tpl, minim, chart, ocean] = await Promise.all([read('docs/index.template.html'), read('dist/minim.min.js'), read('docs/size-inline.svg'), assemble('ocean')]);
 if (minim.includes('</script')) throw new Error('minim.min.js contains </script and cannot be inlined');
-const ocean = (await transform(oceanSrc, { minify: true, target: 'es2022' })).code.trim();
-if (ocean.includes('</script')) throw new Error('ocean.js contains </script and cannot be inlined');
 
 let html = tpl.replace('__MINIM__', () => minim.trim()).replace('__CHART__', () => chart.trim()).replace('__OCEAN__', () => ocean);
 const used = classesIn(html);

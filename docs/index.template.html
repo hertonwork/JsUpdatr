@@ -29,7 +29,7 @@
     section { padding-block: clamp(56px, 9vw, 140px); }
     .wrap { width: min(1120px, 100% - 2 * clamp(20px, 4vw, 32px)); }
     @media (min-width: 768px) { .gr.wl { grid-template-columns: 7fr 5fr; } .gr.wr { grid-template-columns: 5fr 7fr; } }
-    /* the ocean: a WebGL canvas (docs/ocean.js, inlined) at the bottom of the hero; nothing shows until it is ready */
+    /* the ocean: a WebGL canvas (skills/shader-hero, inlined) at the bottom of the hero; nothing shows until it is ready */
     :root { --sea: #0b6e99; } @media (prefers-color-scheme: dark) { :root { --sea: #2b8fbf; } }
     .hero { padding-bottom: clamp(200px, 24vw, 320px); }
     .sea { position: absolute; inset: auto 0 0 0; width: 100%; height: min(52%, 420px); pointer-events: none; opacity: 0; transition: opacity 1.4s;
@@ -321,7 +321,7 @@ npm i @labs_kai/minim</code></pre>
 <!-- 2. Minim, inlined (dist/minim.min.js). Everything above is wired by the time this finishes evaluating. -->
 <script>__MINIM__</script>
 
-<!-- The ocean (docs/ocean.js, inlined and minified): starts after load, when the browser is idle. -->
+<!-- The ocean: skills/shader-hero (harness + ocean scene), assembled, minified and inlined by the build. Starts after load, when the browser is idle. -->
 <script>__OCEAN__</script>
 
 <!-- Demo-only: fake a server fragment arriving later, so the late-DOM demo has something to show. -->
