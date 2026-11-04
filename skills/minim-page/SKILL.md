@@ -109,6 +109,9 @@ that each have their own composition, surfaces separated by tone, no gradients, 
 monospace labels or emoji. The point is not restraint for its own sake: those are the things that make a page read as
 generated, and the audits catch several of them (contrast, heading order, tap targets) anyway.
 
+Want a living hero — an ocean, a flow field of ink — without a request or a lost point? That is the **shader-hero**
+skill next to this one (`skills/shader-hero/`): a 2 KB harness that runs only on real GPUs, inlined after Minim.
+
 ### 4. Inline Minim
 
 Pick the build:

@@ -240,6 +240,7 @@ Tokens: `--ink --mut --bg --sf --sf2 --acc --acci --r` (light: ink #0b0f14, mut 
 | `an-grow` | width = --pct %, eased |
 | `an-fx` | press/hover feedback for buttons |
 | `an-tone` | eased color changes |
+| `an-sea` | an ocean at the bottom of a rel oh parent (--sea sets its color; accent by default) |
 | `an-vt` | view transitions: .3s (data-each) |
 
 ### Variants
