@@ -57,7 +57,7 @@
     "bugs": {
         "url": "https://github.com/hertonwork/minim/issues"
     },
-    "homepage": "https://github.com/hertonwork/minim#readme",
+    "homepage": "https://minim.herton.work",
     "engines": {
         "node": ">=20"
     },
