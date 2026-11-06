@@ -30,7 +30,7 @@
 
 > **For the look:** [sscss](https://github.com/hertonwork/sscss) — super small css — is Minim's companion: 1–3 letter
 > utility classes, generated per page (≈1 KB), dark mode and the `an-*` motion utilities built for Minim. The
-> [demo page](https://hertonwork.github.io/minim/) uses both; together they are under 2 KB and make one request.
+> [demo page](https://minim.herton.work/) uses both; together they are under 2 KB and make one request.
 
 ## Ten seconds
 
@@ -55,7 +55,7 @@ Open the console and type `app.count = 100` — the page follows.
 - **Buttons work without JavaScript.** `command="--inc"` / `--toggle` / `--set` / `--push` ride the HTML Invoker Commands API that every current browser ships.
 - **Late markup binds itself.** Fragments from `fetch`, htmx swaps or server partials are picked up automatically; removed elements release their bindings.
 - **Tiny because it's narrow.** Seven attributes, five commands, dotted paths. No expression language — state names keys, CSS does the animation, `<template>` does the lists. Reach for Alpine or Vue when you need expressions.
-- **It scores 100.** [The demo page](https://hertonwork.github.io/minim/) ships as one HTML file with Minim inlined: one request, Lighthouse 100/100/100/100 on mobile and desktop.
+- **It scores 100.** [The demo page](https://minim.herton.work/) ships as one HTML file with Minim inlined: one request, Lighthouse 100/100/100/100 on mobile and desktop.
 
 A *minim* is the smallest unit of liquid measure. It's also a palindrome. Formerly published as JsUpdatr.
 
@@ -211,7 +211,7 @@ npm run test:lite      # the lite build's tests
 npm run size           # current lite size
 ```
 
-The demo at [hertonwork.github.io/minim](https://hertonwork.github.io/minim) is built from `docs/index.template.html` with
+The demo at [minim.herton.work](https://minim.herton.work) is built from `docs/index.template.html` with
 `dist/minim.min.js` and the size chart inlined (`npm run build:page`); edit the template, not `index.html`.
 
 ## License
